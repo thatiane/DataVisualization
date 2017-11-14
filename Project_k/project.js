@@ -2,7 +2,7 @@ const url_name = 'https://www.cryptonator.com/api/currencies';
 const url_data = 'https://api.cryptonator.com/api/full/';
 //const test_url = 'http://ip.jsontest.com/';
 
-d3.json(url_name, function(error_name, data_name){
+d3.json(url_name, function(error_name, data_name) { 
     //console.log('Checkout this JSON data_name! ', data_name);
     console.log('Checkout data_name! ', data_name.rows);
     let crypto_names = data_name.rows
