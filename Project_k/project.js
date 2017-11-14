@@ -1,6 +1,6 @@
 const url_name = 'https://www.cryptonator.com/api/currencies';
 const url_data = 'https://api.cryptonator.com/api/full/';
-const test_url = 'http://ip.jsontest.com/';
+//const test_url = 'http://ip.jsontest.com/';
 
 d3.json(url_name, function(error_name, data_name){
     //console.log('Checkout this JSON data_name! ', data_name);
@@ -10,7 +10,8 @@ d3.json(url_name, function(error_name, data_name){
     let dataset_name = crypto_names.map(function(d) {
         let url_data_usd =  url_data + String(d["code"])+ "-usd"
         let url_data_usd2 =  url_data + "usd-" + String(d["code"])
-        return [ d["code"], d["name"], d["statuses"], url_data_usd, url_data_usd2];
+        return [ d["code"], d["name"], d["statuses"], url_data_usd];
+        //return [ d["code"], d["name"], d["statuses"], url_data_usd, url_data_usd2];
 
     });
 
@@ -19,19 +20,19 @@ d3.json(url_name, function(error_name, data_name){
 
     for (let i = 0; i < dataset_name.length; i++) {
         d3.json(dataset_name[i][3], function(error_data, data){
-            d3.json(dataset_name[i][4], function(error_data2, data2){
+            //d3.json(dataset_name[i][4], function(error_data2, data2){
                 if(data.success == true && data.ticker.markets.length > 0){
                     crypto_data.push(data)
-                }else if(data2.success == true){
-                    console.log(data2.ticker.markets.length);
+                }/*else if(data2.success == true && data2.ticker.markets.length > 0){
+                    //console.log(data2.ticker.markets.length);
                     crypto_data.push(data2)
-                }
-
+                }*/
 
                 if(data_length - 1 == i){
                 console.log('Checkout this CRYPTO ', crypto_data);
 
-                var crypto_with_market = crypto_data.filter(elem => elem.ticker.markets.length > 0);
+                //let crypto_with_market = crypto_data.filter(elem => elem.ticker.markets.length > 0);
+                let crypto_with_market = crypto_data // because already filter to go faster
 
                 console.log('Checkout this crypto_with_market ', crypto_with_market);
 
@@ -41,7 +42,7 @@ d3.json(url_name, function(error_name, data_name){
 
                 let datasize = crypto_with_market.length;
 
-                var padding = 20;
+                var padding = 10;
                 const x_border = 4;
                 const w = 1000;
                 const h = 500;
@@ -79,7 +80,7 @@ d3.json(url_name, function(error_name, data_name){
 
 
                 }
-            })
+            //})
         })
     }
 
