@@ -29,36 +29,31 @@ d3.json(url_name, function(error_name, data_name){
                 }*/
 
                 if(data_length - 1 == i){
-                console.log('Checkout this CRYPTO ', crypto_data);
-
-                //let crypto_with_market = crypto_data.filter(elem => elem.ticker.markets.length > 0);
-                let crypto_with_market = crypto_data // because already filter to go faster
-
-                console.log('Checkout this crypto_with_market ', crypto_with_market);
+                console.log('Checkout this crypto_data', crypto_data);
 
                 let svg = d3.select("body")
                             .append("svg")
                             .attr("class", "first")
 
-                let datasize = crypto_with_market.length;
+                let datasize = crypto_data.length;
 
                 var padding = 10;
                 const x_border = 4;
-                const w = 1000;
-                const h = 500;
+                const w = svg[0][0].clientWidth;
+                const h = svg[0][0].clientHeight;
                 const width = (w / datasize);
 
                 var yScale = d3.scale.linear()
-                                .domain([0, d3.max(crypto_with_market, function(d) { return d.ticker.markets.length; })])
+                                .domain([0, d3.max(crypto_data, function(d) { return d.ticker.markets.length; })])
                                 .range([h - padding, padding]);
 
                 var xScale = d3.scale.linear()
-                                .domain([0, crypto_with_market.length])
+                                .domain([0, crypto_data.length])
                                 .range([x_border, w - x_border]);
 
 
                 let whatever2 = svg.selectAll('rect')
-                                    .data(crypto_with_market)
+                                    .data(crypto_data)
                                     .enter()
                                     .append('rect')
                                         .attr('x', (d,i) => xScale(i))
@@ -68,7 +63,7 @@ d3.json(url_name, function(error_name, data_name){
                                         .style("fill", (d,i) => "rgb(0,0,0)")
 
                 let omgText = svg.selectAll("text")
-                                    .data(crypto_with_market)
+                                    .data(crypto_data)
                                     .enter()
                                     .append("text")
                                         .text((d) => d.ticker.base)
@@ -77,6 +72,39 @@ d3.json(url_name, function(error_name, data_name){
                                         .attr("font-family", "sans-serif")
                                         .attr("font-size", "7px")
                                         .attr("fill", "red");
+
+                // create the links
+
+                function getKey(value, array){
+                    for(let key in array){
+                        //console.log(array[key]);
+                        if(array[key].name == value){
+                            return key;
+                        }
+                    }
+                    return null;
+                };
+
+                let nodes = crypto_names.map(function(elem) {return {"name":elem.code} });
+
+                let links1 = []
+                let links2 = []
+                for (let j = 0; j < crypto_data.length; j++) {
+                    link = crypto_data[j].ticker.markets
+                    source = crypto_data[j].ticker.base
+                    for(let k = 0; k < link.length; k++) {
+                        market = link[k].market
+                        volume = link[k].volume
+
+                        let key_s = getKey(source, nodes);
+                        let key_t = getKey(market, nodes);
+                        links1.push({"source" : source, "market": market, "volume": volume})
+                        links2.push({"source" : key_s, "market": market, "volume": volume})
+                    }
+                }
+                console.log('Checkout the Nodes ', nodes);
+                console.log('Checkout the Links1 ', links1);
+                console.log('Checkout the Links2 ', links2);
 
 
                 }
