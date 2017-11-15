@@ -2,7 +2,30 @@ const url_name = 'https://www.cryptonator.com/api/currencies';
 const url_data = 'https://api.cryptonator.com/api/full/';
 //const test_url = 'http://ip.jsontest.com/';
 
-d3.json(url_name, function(error_name, data_name) { 
+const CRYPTO_URL = 'https://coinmarketcap.com'
+
+class CurrencyFetcher {
+
+  constructor() {
+
+  }
+
+  getCurrencies() {
+    let request = new XMLHttpRequest();
+
+    console.log('in');
+    request.open('GET', CRYPTO_URL, false);
+    request.setRequestHeader('Access-Control-Allow-Origin', '*');
+    request.send(null);
+    console.log(request);
+
+  }
+}
+
+d3.json(url_name, function(error_name, data_name) {
+    let fetcher = new CurrencyFetcher();
+
+    fetcher.getCurrencies();
     //console.log('Checkout this JSON data_name! ', data_name);
     console.log('Checkout data_name! ', data_name.rows);
     let crypto_names = data_name.rows
