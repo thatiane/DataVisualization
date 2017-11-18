@@ -11,10 +11,10 @@ app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 def index():
     return render_template('project.html')
 
-def test():
-    print('test')
+@app.route('/data')
+def data():
+    return None
 
 
 if __name__ == '__main__':
-    Process(target=test).start()
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', threaded=True)
