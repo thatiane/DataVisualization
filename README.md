@@ -11,6 +11,8 @@ $ pip install Flask-Assets
 
 Then go to Project_k/server/flask and run:
 
+'''
 $ python3 flask_server.py
+'''
 
 You will then be able to connect to the server on http://0.0.0.0:5000/ by default
