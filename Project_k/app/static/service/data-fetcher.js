@@ -1,22 +1,21 @@
-const CRYPTO_URL = 'https://coinmarketcap.com'
 const data_path = '/data'
 
-class VolumesFetcher {
+class DataFetcher {
 
   constructor(refreshPeriod) {
     this.currencies = []
 
     this.dataPromise = null;
 
-    let dataFetching = () => {
+    let fetchVolumes = () => {
       this.dataPromise = fetch(flask_server_url + data_path)
     }
 
-    dataFetching();
-    this.intervalId = setInterval(dataFetching, refreshPeriod);
+    fetchVolumes();
+    this.intervalId = setInterval(fetchVolumes, refreshPeriod);
   }
 
-  getVolumes() {
+  getData() {
     return this.dataPromise.then((response) => {
       return response.json();
     });
