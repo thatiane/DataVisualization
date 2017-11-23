@@ -9,24 +9,34 @@ class VolumesFetcher:
     def __init__(self, currencies_fetcher, refresh_rate):
         manager = Manager()
         self.pairs_volume = manager.list()
+        self.currencies = manager.list()
         self.currencies_fetcher = currencies_fetcher
         self.refresh_rate = refresh_rate
 
     def scrap_data_once(self):
-            currencies = self.currencies_fetcher.scrap_data()
+        del self.currencies[:]
+        currencies = self.currencies_fetcher.scrap_data()
 
-            del self.pairs_volume[:]
+        # Problem here. Next two lines should be atomic
+        del self.pairs_volume[:]
+        self.currencies._callmethod('append', [currencies])
 
-            for c in currencies:
-                transactions = self.__get_transactions(c)
-                self.pairs_volume._callmethod('append', [transactions])
+        for c in currencies:
+            transactions = self.__get_transactions(c)
+            self.pairs_volume._callmethod('append', [transactions])
 
     def scrap_data_repeatedly(self):
         self.scrap_data_once()
         set_interval(self.scrap_data_once, self.refresh_rate)
 
     def get_json_data(self):
-        return jsonify(self.pairs_volume.__str__())
+        return jsonify([self.get_currencies(), self.get_volumes()])
+
+    def get_volumes(self):
+        return self.pairs_volume.__str__()
+
+    def get_currencies(self):
+        return self.currencies.__str__()
 
     def __string_to_number(self, string):
         # Last two line deal with the ** rows marked on coinmarketcap\
@@ -57,7 +67,7 @@ class VolumesFetcher:
             for i, n in zip(td, names):
                 d[n].append(i.text.strip())
 
-        # TODO remove pair with volume == 0
+        # TODO remove pairs with volume == 0
         clean = self.__string_to_number
         rows = list(zip(*d.values()))
         rows = list(map(lambda row: {'source': row[1], 'pair': row[2], 'volume24h': clean(row[3]), 'price': clean(row[4]), 'volume%': clean(row[5]) / 100, 'updated': row[6]}, rows))
