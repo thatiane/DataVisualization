@@ -33,6 +33,7 @@ class VolumesFetcher:
         return jsonify([self.get_currencies(), self.get_volumes()])
 
     def get_volumes(self):
+        print(self.pairs_volume.__str__())
         return self.pairs_volume.__str__()
 
     def get_currencies(self):
@@ -69,7 +70,17 @@ class VolumesFetcher:
 
         # TODO remove pairs with volume == 0
         clean = self.__string_to_number
-        rows = list(zip(*d.values()))
+
+
+        source = d["Source"]
+        updated = d["Updated"]
+        price = d["Price"]
+        pair = d["Pair"]
+        volume24 = d["Volume (24h)"]
+        volume = d["Volume (%)"]
+        tag = d["#"]
+
+        rows = zip(tag, source, pair, volume24, price, volume, updated)
         rows = list(map(lambda row: {'source': row[1], 'pair': row[2], 'volume24h': clean(row[3]), 'price': clean(row[4]), 'volume%': clean(row[5]) / 100, 'updated': row[6]}, rows))
 
         return rows
