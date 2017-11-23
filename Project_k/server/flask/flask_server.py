@@ -10,7 +10,7 @@ static_dir = os.path.abspath('../../app/static')
 
 app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 
-js = Bundle('project.js', 'service/currencies-fetcher.js', output='gen/javascript.js')
+js = Bundle('service/volumes-fetcher.js', 'project.js', output='gen/javascript.js')
 
 assets = Environment(app)
 assets.register('javascript_js', js)
