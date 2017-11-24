@@ -1,0 +1,6 @@
+.viewport{
+    width: 155px;
+    height: 200px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
