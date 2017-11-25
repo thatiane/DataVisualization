@@ -10,7 +10,7 @@ promise.then((data) => {
     volumes = parseVolumes(data[1]);
 
     //Show UI
-    ScorllBox(currencies);
+    ScorllBox(currencies.map(x=>x['name']));
 
     //Create and show graph
     const graph = new Graph(currencies, volumes);
