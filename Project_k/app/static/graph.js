@@ -3,22 +3,23 @@ class Graph {
     constructor(currencies, exchanges) {
         this.currencies = currencies;
         this.exchanges = exchanges;
+        this.currencieIds = [];
     }
 
 
     showGraph() {
-        var yourDiv = document.getElementById("graph")
-        yourDiv.style.width = "80%";
-        yourDiv.style.height = "90%";
-        yourDiv.style.left = "10%";
-        yourDiv.style.top = "15px";
-        yourDiv.style.position = "absolute";
-        yourDiv.style.border = "solid";
+        var div = document.getElementById("graph");
+        div.style.width = "80%";
+        div.style.height = "90%";
+        div.style.left = "10%";
+        div.style.top = "15px";
+        div.style.position = "absolute";
+        div.style.border = "solid";
 
 
 
         this.cy = cytoscape({
-            container: yourDiv,
+            container: div,
 
             layout: {
                 name: 'cose',
@@ -29,7 +30,7 @@ class Graph {
                 .selector('node')
                 .style({
                     'shape': 'ellipse',
-                    'content': 'data(id)',
+                    'content': 'data(name)',
                     'text-valign': 'center',
                     'text-outline-width': 1,
                     'text-outline-color': '#afb1b0',
@@ -44,10 +45,9 @@ class Graph {
                 .selector('edge')
                 .style({
                     'opacity': 0.666,
-                    'width': 'data(strength)',
+                    'width': 1,
                     'line-color': 'data(faveColor)',
-                    'source-arrow-color': 'data(faveColor)',
-                    'target-arrow-color': 'data(faveColor)'
+                    'target-arrow-shape': 'triangle'
                 })
                 .selector(':selected')
                 .style({
@@ -57,30 +57,37 @@ class Graph {
 
             elements: {
                 nodes: this._setNodes(),
-               // edges: this._setEdges()
+                edges: this._setEdges()
             }
         });
     }
 
     _setNodes() {
-        var result = []
+        var result = [];
 
         for(let i=0; i<this.currencies.length; i++) {
-            result.push({data: {id: this.currencies[i]}});
+            result.push({data: this.currencies[i]});
+            //Keep track of existing nodes
+            this.currencieIds.push(this.currencies[i]['id']);
         }
 
         return result
     }
 
     _setEdges() {
-        var result = [
-                    {data: {source: 'j', target: 'e', faveColor: '#6FB1FC', strength: 10}},
-                    {data: {source: 'j', target: 'k', faveColor: '#6FB1FC', strength: 4}},
-                    {data: {source: 'j', target: 'g', faveColor: '#6FB1FC', strength: 1}},
-                    {data: {source: 'e', target: 'k', faveColor: '#EDA1ED', strength: 1}},
-                    {data: {source: 'k', target: 'g', faveColor: '#86B342', strength: 3}},
-                ]
+        var result = [];
+
+        for (let i = 0; i < this.exchanges.length; i++) {
+            for (let j = 0; j < this.exchanges[i].length; j++) {
+                var pair = this.exchanges[i][j]['pair'].split("/");
+
+                //Set edges only between existing nodes
+                if(this.currencieIds.includes(pair[0]) && this.currencieIds.includes(pair[1])) {
+                    result.push({data: {source: pair[0], target: pair[1], faveColor: '#6FB1FC', strength: 10}});
+                }
+            }
+        }
+
         return result
     }
-
 }
