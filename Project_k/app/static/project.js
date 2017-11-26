@@ -9,6 +9,7 @@ promise.then((data) => {
     currencies = parseCurrencies(data[0]);
     volumes = parseVolumes(data[1]);
 
+    console.log(currencies)
     //Show UI
     ScorllBox(currencies.map(x=>x['name']));
 

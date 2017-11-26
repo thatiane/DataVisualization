@@ -3,7 +3,7 @@ function parseCurrencies(currencies) {
     var cleanedCurrencies = currencies.replace(/'/g, '"').replace(/u"/g, '"').replace(/None/g, '""');
     var splittedCurrencies = JSON.parse(cleanedCurrencies)
 
-    return splittedCurrencies[0];
+    return splittedCurrencies;
 }
 
 function parseVolumes(volumes) {
