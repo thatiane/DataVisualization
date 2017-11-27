@@ -4,33 +4,36 @@ class Graph {
         this.currencies = currencies;
         this.exchanges = exchanges;
         this.currencieIds = [];
+        this.removedNodes = [];
+        this.removedEdges = [];
+
     }
 
 
     showGraph() {
         var div = document.getElementById("graph");
         div.style.width = "80%";
-        div.style.height = "90%";
+        div.style.height = "100%";
         div.style.left = "10%";
         div.style.top = "15px";
         div.style.position = "absolute";
-        div.style.border = "solid";
+        //div.style.border = "solid";
 
 
 
-        this.cy = cytoscape({
+        cy = window.cy = cytoscape({
             container: div,
 
             layout: {
-                name: 'cose',
-                padding: 10
+                //name: 'cose'
+               // padding: 10
             },
 
             style: cytoscape.stylesheet()
                 .selector('node')
                 .style({
                     'shape': 'ellipse',
-                    'content': 'data(name)',
+                    'content': 'data(id)',
                     'text-valign': 'center',
                     'text-outline-width': 1,
                     'text-outline-color': '#afb1b0',
@@ -45,7 +48,7 @@ class Graph {
                 .selector('edge')
                 .style({
                     'opacity': 0.666,
-                    'width': 1,
+                    'width': 'data(strength)',
                     'line-color': 'data(faveColor)',
                     'target-arrow-shape': 'triangle'
                 })
@@ -83,11 +86,51 @@ class Graph {
 
                 //Set edges only between existing nodes
                 if(this.currencieIds.includes(pair[0]) && this.currencieIds.includes(pair[1])) {
-                    result.push({data: {source: pair[0], target: pair[1], faveColor: '#6FB1FC', strength: 10}});
+                    result.push({data: {source: pair[0], target: pair[1], faveColor: '#6FB1FC', strength: 1}});
                 }
             }
         }
 
         return result
+    }
+
+    removeNode(id) {
+        var ns = []
+        var es = []
+        cy.nodes().forEach(function (node) {if ((node.data('id')=== id)) {
+            ns.push(node);
+
+        }});
+
+        cy.edges().forEach(function (edge) {if ((edge.data('source')=== id) || (edge.data('target')=== id)) {
+            es.push(edge);
+
+        }});
+
+        for (let i = 0; i < ns.length; i++) {
+            this.removedNodes.push(ns[i]);
+        }
+
+        for (let i = 0; i < es.length; i++) {
+            this.removedEdges.push(es[i]);
+        }
+
+
+        cy.remove("#"+id);
+    }
+
+    addNode(id) {
+        this.removedNodes.forEach(function (node) {
+            if(node.data("id") === id) {
+                cy.add(node);
+            }
+        });
+
+         this.removedEdges.forEach(function (edge) {
+            if((edge.data('source')=== id) || (edge.data('target')=== id)) {
+                cy.add(edge);
+            }
+        });
+
     }
 }

@@ -1,4 +1,4 @@
-function scrollBox(data_) {
+function scrollBox(data_, graph) {
 
     let h = 500
     let w = 155
@@ -44,13 +44,16 @@ function scrollBox(data_) {
                     .attr("class", "check")
                     .attr("value", (d) => d)
                     .on("change",function() {
-                        check = d3.select("checkbox")
-                        console.log(this.checked);
-                        console.log(this.value);
-                        return [this.checked, this.value]
+                        var checked = this.checked;
+                        var value = (this.value);
+                        if(checked) {
+                            graph.addNode(value);
+                        }
+                         else {
+                            graph.removeNode(value);
+                        }
                     })
                     .attr("checked", true);
-
 
 
     let boutons = box.append("div")
