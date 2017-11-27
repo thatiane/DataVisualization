@@ -1,3 +1,6 @@
+Project_k/.idea/*
+Project_k/app/static/.webassets-cache/*
+Project_k/app/static/gen/*
 .DS_Store
 __pycache__/
 gen

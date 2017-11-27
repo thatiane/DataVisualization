@@ -22,7 +22,7 @@ class VolumesFetcher:
         self.currencies._callmethod('append', [currencies])
 
         for c in currencies:
-            transactions = self.__get_transactions(c)
+            transactions = self.__get_transactions(c['market_path'])
             self.pairs_volume._callmethod('append', [transactions])
 
     def scrap_data_repeatedly(self):
