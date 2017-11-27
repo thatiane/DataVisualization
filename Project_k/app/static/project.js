@@ -5,13 +5,14 @@ dataFetcher = new DataFetcher(refreshPeriod);
 promise = dataFetcher.getData();
 
 promise.then((data) => {
+  
     //Receive data
     currencies = parseCurrencies(data[0]);
     volumes = parseVolumes(data[1]);
 
     console.log(currencies)
     //Show UI
-    ScorllBox(currencies.map(x=>x['name']));
+    ScorllBox(currencies.map(x=>x['name']))
 
     //Create and show graph
     const graph = new Graph(currencies, volumes);

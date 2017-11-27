@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <script src="https://d3js.org/d3.v3.js"></script>
+        <script src="https://d3js.org/d3.v4.0.0-alpha.40.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.2.6/cytoscape.min.js"></script>
         <title> Project k </title>
         <link rel="stylesheet" href="../static/project.css" />
@@ -11,11 +12,13 @@
     <body>
       {% assets "javascript_js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+        <script src="../static/scrollbox.js"></script>
         <script src="../static/VirtualScroller.js"></script>
         <script src="../static/box.js"></script>
         <script src="../static/graph.js"></script>
         <script src="../static/utils.js"></script>
       {% endassets %}
+      
       <div class="viewport"></div>
       <div class="information"></div>
       <div id="graph"></div>

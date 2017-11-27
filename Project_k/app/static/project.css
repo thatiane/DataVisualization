@@ -1,6 +1,13 @@
-.viewport{
+.scrollBox{
     width: 155px;
-    height: 200px;
+    height: 500px;
     overflow-x: hidden;
     overflow-y: auto;
+}
+
+input{
+    height: 24px;
+    width: 19px;
+    background-color: black;
+    
 }
