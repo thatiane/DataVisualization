@@ -14,26 +14,28 @@ class VolumesFetcher:
         self.refresh_rate = refresh_rate
 
     def scrap_data_once(self):
-        del self.currencies[:]
         currencies = self.currencies_fetcher.scrap_data()
 
-        # Problem here. Next two lines should be atomic
-        del self.pairs_volume[:]
-        self.currencies._callmethod('append', [currencies])
+        pairs_volume = []
 
         for c in currencies:
-            transactions = self.__get_transactions(c)
-            self.pairs_volume._callmethod('append', [transactions])
+            transactions = self.__get_transactions(c['market_path'])
+            pairs_volume.append(transactions)
+
+        # Problem here. This should be atomic
+        self.currencies[:] = currencies
+        self.pairs_volume[:] = pairs_volume
+        print('Volume scraping complete')
 
     def scrap_data_repeatedly(self):
         self.scrap_data_once()
         set_interval(self.scrap_data_once, self.refresh_rate)
 
     def get_json_data(self):
+        print(self.get_volumes())
         return jsonify([self.get_currencies(), self.get_volumes()])
 
     def get_volumes(self):
-        print(self.pairs_volume.__str__())
         return self.pairs_volume.__str__()
 
     def get_currencies(self):
@@ -70,7 +72,6 @@ class VolumesFetcher:
 
         # TODO remove pairs with volume == 0
         clean = self.__string_to_number
-
 
         source = d["Source"]
         updated = d["Updated"]
