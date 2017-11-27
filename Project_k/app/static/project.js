@@ -36,8 +36,6 @@ promise.then((data) => {
   }
   //console.log("Name = " + currencies_name);
 
-  ScorllBox(currencies_name)
-
-
+  scrollBox(currencies_name)
 
 });

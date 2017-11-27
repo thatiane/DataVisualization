@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <script src="https://d3js.org/d3.v3.js"></script>
+        <script src="https://d3js.org/d3.v4.0.0-alpha.40.min.js"></script>
         <title> Project k </title>
         <link rel="stylesheet" href="../static/project.css" />
     </head>
@@ -10,10 +11,7 @@
     <body>
       {% assets "javascript_js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-        <script src="../static/VirtualScroller.js"></script>
-        <script src="../static/box.js"></script>
+        <script src="../static/scrollbox.js"></script>
       {% endassets %}
-      <div class="viewport"></div>
-      <div class="information"></div>
     </body>
 </html>
