@@ -1,4 +1,4 @@
-const flask_server_url = 'http://0.0.0.0:5000';
+const flask_server_url = 'http://cryptocurrency.gucevska.io:5000';
 const refreshPeriod = 300000;
 
 dataFetcher = new DataFetcher(refreshPeriod);
