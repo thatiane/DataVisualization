@@ -16,7 +16,7 @@ class Graph {
         div.style.height = "100%";
         div.style.left = "0";
         div.style.top = "0";
-        div.style.paddingLeft = "200px";
+        div.style.paddingLeft = "100px";
         div.style.position = "fixed";
         div.style.zIndex = "-1";
 
