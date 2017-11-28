@@ -1,4 +1,4 @@
-function scrollBox(data_) {
+function scrollBox(data_, graph) {
 
     let h = 500
     let w = 155
@@ -44,13 +44,16 @@ function scrollBox(data_) {
                     .attr("class", "check")
                     .attr("value", (d) => d)
                     .on("change",function() {
-                        check = d3.select("checkbox")
-                        console.log(this.checked);
-                        console.log(this.value);
-                        return [this.checked, this.value]
+                        var checked = this.checked;
+                        var value = (this.value);
+                        if(checked) {
+                            graph.addNode(value);
+                        }
+                         else {
+                            graph.removeNode(value);
+                        }
                     })
                     .attr("checked", true);
-
 
 
     let boutons = box.append("div")
@@ -64,6 +67,7 @@ function scrollBox(data_) {
                         let list_to_check = document.getElementsByClassName("check");
                         for(let i =0; i<list_to_check.length; i++){
                             list_to_check[i].checked = true;
+                            graph.addNode( list_to_check[i].value);
                         }
                     })
                     .text("Check All")
@@ -74,8 +78,9 @@ function scrollBox(data_) {
                             let list_to_check = document.getElementsByClassName("check");
                             for(let i =0; i<list_to_check.length; i++){
                                 list_to_check[i].checked = false;
+                                graph.removeNode( list_to_check[i].value);
+
                             }
                         })
                         .text("Uncheck All")
-
 }
