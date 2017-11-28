@@ -1,5 +1,13 @@
-.scrollBox{
-    width: 155px;
+div.box {
+    width: 170px;
+    height: 0px;
+    position: absolute;
+    overflow: hidden;
+    padding-left: 5px;
+}
+
+div.scrollBox{
+    width: 165px;
     height: 500px;
     overflow-x: hidden;
     overflow-y: auto;
@@ -32,7 +40,7 @@ button.accordion {
     color: #444;
     cursor: pointer;
     padding: none;
-    width: 170px;
+    width: 190px;
     border: none;
     text-align: left;
     outline: none;
@@ -53,11 +61,4 @@ button.accordion:after {
 
 button.accordion.active:after {
     content: "\2212";
-}
-
-div.box {
-    width: 170px;
-    height: 0px;
-    position: absolute;
-    overflow: hidden;
 }

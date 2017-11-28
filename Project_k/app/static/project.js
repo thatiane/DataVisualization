@@ -16,6 +16,6 @@ promise.then((data) => {
     const graph = new Graph(currencies, volumes);
     graph.showGraph();
 
-//Show UI
-    scrollBox(currencies.map(x=>x['id']), graph)
+    //Show UI
+    scrollBox(currencies.map(x=>[x['id'],x['name']]), graph)
 });

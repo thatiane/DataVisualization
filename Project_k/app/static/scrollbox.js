@@ -46,13 +46,13 @@ function scrollBox(data_, graph) {
                     .attr("fill", "#1f77b4");
 
     let text = svg.append('text')
-                    .text((d) => d)
+                    .text((d) => d[1])
                     .attr("transform","translate(10,15)");
 
     let inp = nameBox.append("input")
                     .attr("type","checkbox")
                     .attr("class", "check")
-                    .attr("value", (d) => d)
+                    .attr("value", (d) => d[0])
                     .on("change",function() {
                         var checked = this.checked;
                         var value = (this.value);
