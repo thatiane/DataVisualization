@@ -32,7 +32,6 @@ class VolumesFetcher:
         set_interval(self.scrap_data_once, self.refresh_rate)
 
     def get_json_data(self):
-        print(self.get_volumes())
         return jsonify([self.get_currencies(), self.get_volumes()])
 
     def get_volumes(self):
