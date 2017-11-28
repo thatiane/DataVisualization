@@ -12,20 +12,20 @@ class Graph {
 
     showGraph() {
         var div = document.getElementById("graph");
-        div.style.width = "80%";
+        div.style.width = "100%";
         div.style.height = "100%";
-        div.style.left = "10%";
-        div.style.top = "15px";
-        div.style.position = "absolute";
-        //div.style.border = "solid";
-
+        div.style.left = "0";
+        div.style.top = "0";
+        div.style.paddingLeft = "200px";
+        div.style.position = "fixed";
+        div.style.zIndex = "-1";
 
 
         cy = window.cy = cytoscape({
             container: div,
 
             layout: {
-                //name: 'cose'
+                name: 'cose'
                // padding: 10
             },
 
@@ -97,15 +97,19 @@ class Graph {
     removeNode(id) {
         var ns = []
         var es = []
-        cy.nodes().forEach(function (node) {if ((node.data('id')=== id)) {
-            ns.push(node);
+        cy.nodes().forEach(function (node) {
+            if ((node.data('id') === id)) {
+                ns.push(node);
 
-        }});
+            }
+        });
 
-        cy.edges().forEach(function (edge) {if ((edge.data('source')=== id) || (edge.data('target')=== id)) {
-            es.push(edge);
+        cy.edges().forEach(function (edge) {
+            if ((edge.data('source') === id) || (edge.data('target') === id)) {
+                es.push(edge);
 
-        }});
+            }
+        });
 
         for (let i = 0; i < ns.length; i++) {
             this.removedNodes.push(ns[i]);
@@ -115,22 +119,39 @@ class Graph {
             this.removedEdges.push(es[i]);
         }
 
+        var index = this.currencieIds.indexOf(id);
+        if (index > -1) {
+            console.log("here");
+            this.currencieIds.splice(index, 0);
+            console.log(this.currencieIds);
+        }
 
         cy.remove("#"+id);
     }
 
     addNode(id) {
-        this.removedNodes.forEach(function (node) {
+        for (let i = 0; i < this.removedNodes.length; i++) {
+            var node = this.removedNodes[i];
             if(node.data("id") === id) {
                 cy.add(node);
+                this.currencieIds.push(id);
             }
-        });
+        }
 
-         this.removedEdges.forEach(function (edge) {
-            if((edge.data('source')=== id) || (edge.data('target')=== id)) {
-                cy.add(edge);
+        for (let i = 0; i < this.removedEdges.length; i++) {
+             var edge = this.removedEdges[i];
+             var source_id = edge.data('source');
+             var target_id = edge.data('target');
+
+            if((source_id === id) || (target_id === id)) {
+                console.log(source_id);
+                console.log(target_id);
+
+                if(this.currencieIds.includes(source_id) && this.currencieIds.includes(target_id)) {
+                    cy.add(edge);
+                }
             }
-        });
+        }
 
     }
 }

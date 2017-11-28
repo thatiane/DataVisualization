@@ -67,6 +67,7 @@ function scrollBox(data_, graph) {
                         let list_to_check = document.getElementsByClassName("check");
                         for(let i =0; i<list_to_check.length; i++){
                             list_to_check[i].checked = true;
+                            graph.addNode( list_to_check[i].value);
                         }
                     })
                     .text("Check All")
@@ -77,8 +78,9 @@ function scrollBox(data_, graph) {
                             let list_to_check = document.getElementsByClassName("check");
                             for(let i =0; i<list_to_check.length; i++){
                                 list_to_check[i].checked = false;
+                                graph.removeNode( list_to_check[i].value);
+
                             }
                         })
                         .text("Uncheck All")
-
 }
