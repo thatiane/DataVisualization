@@ -1,18 +1,21 @@
 div.box {
-    width: 170px;
+    width: 160px;
     height: 0px;
     position: absolute;
     overflow: hidden;
-    padding-left: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 div.scrollBox{
-    width: 165px;
+    width: 155px;
     height: 500px;
     overflow-x: hidden;
     overflow-y: auto;
     z-index: 200;
 }
+
+
 
 div.scrollBox::-webkit-scrollbar {
     width: 5px;
