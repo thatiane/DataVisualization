@@ -66,11 +66,11 @@ class Graph {
         });
 
         cy.on('click', 'node', function (evt) {
-             console.log(this._private.data.name)
+             document.getElementsByClassName("nodeText")[0].textContent = this._private.data.name
         });
         cy.on('click', 'edge', function (evt) {
-             console.log(this._private.data.source)
-             console.log(this._private.data.target)
+            let text = "Source = " + this._private.data.source + "<br/> Target = " + this._private.data.target + "<br/> Volume = " + "v";
+            document.getElementsByClassName("edgeText")[0].innerHTML = text
         });
     }
 

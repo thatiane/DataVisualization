@@ -10,7 +10,7 @@ promise.then((data) => {
     volumes = parseVolumes(data[1]);
 
     console.log(currencies)
-    accordion(3, ["Select Node", "Nodes", "Edges"]);
+    accordion(3, ["Select Node", "Nodes", "Edges"], [520, 200, 200]);
 
     //Create and show graph
     const graph = new Graph(currencies, volumes);
@@ -20,7 +20,10 @@ promise.then((data) => {
 
     currencies_name_id = currencies.map(x=>[x['id'],x['name']])
 
-    scrollBox(currencies_name_id, 0, graph)
+    scrollBox(currencies_name_id, 0, graph);
     scrollBox_button(0, graph);
+
+    scrollBoxNode(1);
+    scrollBoxEdge(2);
 
 });
