@@ -12,11 +12,12 @@ class Graph {
 
     showGraph() {
         var div = document.getElementById("graph");
+        var acc_width = document.getElementsByClassName("accordion")[0].offsetWidth
         div.style.width = "100%";
         div.style.height = "100%";
         div.style.left = "0";
         div.style.top = "0";
-        div.style.paddingLeft = "100px";
+        div.style.paddingLeft = acc_width + 10 + "px";
         div.style.position = "fixed";
         div.style.zIndex = "-1";
 
@@ -62,6 +63,14 @@ class Graph {
                 nodes: this._setNodes(),
                 edges: this._setEdges()
             }
+        });
+
+        cy.on('click', 'node', function (evt) {
+             console.log(this._private.data.name)
+        });
+        cy.on('click', 'edge', function (evt) {
+             console.log(this._private.data.source)
+             console.log(this._private.data.target)
         });
     }
 
@@ -144,8 +153,8 @@ class Graph {
              var target_id = edge.data('target');
 
             if((source_id === id) || (target_id === id)) {
-                console.log(source_id);
-                console.log(target_id);
+                //console.log(source_id);
+                //console.log(target_id);
 
                 if(this.currencieIds.includes(source_id) && this.currencieIds.includes(target_id)) {
                     cy.add(edge);
