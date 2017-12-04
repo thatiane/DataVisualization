@@ -26,18 +26,18 @@ function scrollBox(data_, graph) {
                     .enter()
                     .append("div")
                     .attr("class", "nameBox")
-                    .attr("height", 24)
-                    .attr("width", 25)
                     //.attr("transform", (d,i) => "translate(3,"+0.2*i+")");
+
+    let padding_row_rect = 30
 
     let svg = nameBox.append("svg")
                         .attr("class", "row")
                         .attr("height", 24)
-                        .attr("width", w - 35);
+                        .attr("width", w - padding_row_rect);
 
     let rect = svg.append('rect')
                     .attr("height", 24)
-                    .attr("width", w - 35)
+                    .attr("width", w - padding_row_rect)
                     .attr("rx", 3)
                     .attr("ry", 3)
                     .attr("fill-opacity", 0.25)
@@ -46,13 +46,13 @@ function scrollBox(data_, graph) {
                     .attr("fill", "#1f77b4");
 
     let text = svg.append('text')
-                    .text((d) => d)
+                    .text((d) => d[1])
                     .attr("transform","translate(10,15)");
 
     let inp = nameBox.append("input")
                     .attr("type","checkbox")
                     .attr("class", "check")
-                    .attr("value", (d) => d)
+                    .attr("value", (d) => d[0])
                     .on("change",function() {
                         var checked = this.checked;
                         var value = (this.value);
