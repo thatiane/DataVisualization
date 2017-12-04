@@ -20,6 +20,7 @@ function scrollBox(data_, graph) {
     let scrollBox = box.append("div")
                     .attr("class", "scrollBox")
                     .attr("style", "outline: 3px solid black;")
+                    .attr("background", "#fff")
 
     let nameBox = scrollBox.selectAll("div")
                     .data(data_)

@@ -16,29 +16,39 @@ class Graph {
         div.style.height = "100%";
         div.style.left = "0";
         div.style.top = "0";
-        div.style.paddingLeft = "100px";
+        div.style.paddingLeft = "200px";
         div.style.position = "fixed";
         div.style.zIndex = "-1";
+        div.style.background = "#000";
+        div.style.alignContent="center";
 
 
         cy = window.cy = cytoscape({
             container: div,
 
             layout: {
-                name: 'cose'
-               // padding: 10
+               name: 'concentric',
+                concentric: function( node ){
+                    return node.degree();
+                },
+                levelWidth: function( nodes ){
+                    return 10;
+                }
             },
 
             style: cytoscape.stylesheet()
                 .selector('node')
                 .style({
                     'shape': 'ellipse',
+                    'width': 'data(width)',
+                    'height': 'data(width)',
                     'content': 'data(id)',
                     'text-valign': 'center',
+                    'font-size': 'data(strength)',
                     'text-outline-width': 1,
                     'text-outline-color': '#afb1b0',
                     'background-color': '#afb1b0',
-                    'color': '#fff'
+                    'color': '#fff',
                 })
                 .selector(':selected')
                 .style({
@@ -47,10 +57,12 @@ class Graph {
                 })
                 .selector('edge')
                 .style({
+                    'curve-style': 'bezier',
                     'opacity': 0.666,
                     'width': 'data(strength)',
                     'line-color': 'data(faveColor)',
                     'target-arrow-shape': 'triangle'
+
                 })
                 .selector(':selected')
                 .style({
@@ -69,7 +81,13 @@ class Graph {
         var result = [];
 
         for(let i=0; i<this.currencies.length; i++) {
+            var value = Math.log(parseFloat(this.currencies[i]['volume-btc']))*10
+
+            this.currencies[i]['width'] =  Math.round(value);
+            this.currencies[i]['strength'] = value/3;
+
             result.push({data: this.currencies[i]});
+            console.log(this.currencies[i]['width']);
             //Keep track of existing nodes
             this.currencieIds.push(this.currencies[i]['id']);
         }
