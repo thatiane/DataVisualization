@@ -176,7 +176,7 @@ class Graph {
             this.currencies[node_to_remove.data('id')]['visible'] = false;
 
             for (let i = 0; i < es.length; i++) {
-                var edge = this.exchanges[es[i].data('id')];
+                var edge = this.exchanges_total[es[i].data('id')];
                 edge['edge'] = es[i];
                 edge['visible'] = false;
             }
@@ -192,8 +192,8 @@ class Graph {
             cy.add(node_to_add['node']);
 
             //Add the edges
-            for(var key in this.exchanges) {
-                var edge = this.exchanges[key];
+            for(var key in this.exchanges_total) {
+                var edge = this.exchanges_total[key];
                 if(key.indexOf(id) !== -1 && !edge['visible']) {
                     var edge_to_add = edge['edge'];
                     var source_id = edge_to_add.data('source');
