@@ -105,10 +105,9 @@ class Graph {
                 .selector('edge')
                 .style({
                     'curve-style': 'bezier',
-                    //'opacity': 0.666,
+                    'opacity': 0.666,
                     'width': 'data(strength)',
-//                    'line-color': 'data(faveColor)',
- //                   'target-arrow-shape': 'triangle'
+                    'line-color': 'data(faveColor)',
 
                 })
                 .selector(':selected')
@@ -147,7 +146,11 @@ class Graph {
 
             if(node_ids.includes(pair[0]) && node_ids.includes(pair[1])) {
                 edge['visible'] = true;
-                result.push({data: {id: key, source: pair[0], target: pair[1], faveColor: '#6FB1FC', strength: 1}});
+                console.log()
+                var edge_size = Math.log(edge['volume'] + 3)/Math.log(3);
+                console.log(edge_size);
+
+                result.push({data: {id: key, source: pair[0], target: pair[1], faveColor: '#6FB1FC', strength: edge_size}});
             }
         }
 
