@@ -1,8 +1,8 @@
 div.scrollBox{
     width: 155px;
-    height: 500px;
     overflow-x: hidden;
     overflow-y: auto;
+    background-color: White;
     z-index: 200;
 }
 
@@ -19,4 +19,12 @@ div.scrollBox::-webkit-scrollbar-thumb {
     background: #1f77b4;
     border-radius: 10px;
 
+}
+text.nodeText{
+    font-family:Times New Roman;
+    font-size:15px;
+}
+text.edgeText{
+    font-family:Times New Roman;
+    font-size:15px;
 }

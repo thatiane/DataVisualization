@@ -17,7 +17,7 @@ class Graph {
         div.style.height = "100%";
         div.style.left = "0";
         div.style.top = "0";
-        div.style.paddingLeft = acc_width + 10 + "px";
+        div.style.paddingLeft = "0px"//acc_width + 10 + "px";
         div.style.position = "fixed";
         div.style.zIndex = "-1";
 
@@ -64,13 +64,67 @@ class Graph {
                 edges: this._setEdges()
             }
         });
-
+        let obj_node = new Object();
         cy.on('click', 'node', function (evt) {
-             document.getElementsByClassName("nodeText")[0].textContent = this._private.data.name
+             let data = this._private.data
+             let key = data.name
+             let value = [data["change-usd"],data["price-usd"], data["volume-usd"]]
+
+             if(key in obj_node){
+                delete obj_node[key];
+             }else{
+                 obj_node[key] = value
+             }
+             let text = "";
+             let size_node = Object.keys(obj_node).length;
+             if(size_node == 0){
+                 text = text.concat("Node")
+             }else{
+                 for (let i = 0; i < size_node; i++) {
+                     let key_obj = Object.keys(obj_node)[i]
+                     text = text.concat("<b><u>"+key_obj +"</u></b><br/> change in usd: "+obj_node[key_obj][0]+"<br/> price in usd: "+obj_node[key_obj][1]+"<br/> volume in usd: " +obj_node[key_obj][2]+"<br/> <br/>");
+                 }
+             }
+             document.getElementsByClassName("nodeText")[0].innerHTML = text
         });
+        let obj_edge = new Object();
         cy.on('click', 'edge', function (evt) {
-            let text = "Source = " + this._private.data.source + "<br/> Target = " + this._private.data.target + "<br/> Volume = " + "v";
+            let source = this._private.data.source
+            let target = this._private.data.target
+            let key = source+"_"+target;
+
+            if(key in obj_edge){
+               delete obj_edge[key];
+            }else{
+                obj_edge[key] = key
+            }
+
+            let text = "";
+            let size_edge = Object.keys(obj_edge).length;
+            if(size_edge == 0){
+                text = text.concat("Source = s <br/> Target = t <br/> Volume = v");
+            }else{
+                for (let i = 0; i < size_edge; i++) {
+                    let key_obj = Object.keys(obj_edge)[i]
+                    let res = key_obj.split("_");
+                    let s = res[0]
+                    let t = res[1]
+                    text = text.concat("Source = <b>" + s + "</b><br/> Target = <b>" + t + "</b><br/> Volume = " + "v" + "<br/> <br/>");
+                }
+            }
             document.getElementsByClassName("edgeText")[0].innerHTML = text
+        });
+        cy.on('mouseover', 'node', function (evt) {
+            console.log("text");
+        });
+        cy.on('mouseout', 'node', function (evt) {
+            console.log("text2");
+        });
+        cy.on('mouseover', 'edge', function (evt) {
+            console.log("text");
+        });
+        cy.on('mouseout', 'edge', function (evt) {
+            console.log("text2");
         });
     }
 
@@ -130,9 +184,7 @@ class Graph {
 
         var index = this.currencieIds.indexOf(id);
         if (index > -1) {
-            console.log("here");
             this.currencieIds.splice(index, 0);
-            console.log(this.currencieIds);
         }
 
         cy.remove("#"+id);
