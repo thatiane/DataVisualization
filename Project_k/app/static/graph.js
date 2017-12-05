@@ -1,12 +1,58 @@
 class Graph {
 
     constructor(currencies, exchanges) {
-        this.currencies = currencies;
-        this.exchanges = exchanges;
-        this.currencieIds = [];
-        this.removedNodes = [];
-        this.removedEdges = [];
+        this.currencies = {};
+        this.exchanges = {};
 
+        for (let i = 0; i < currencies.length; i++) {
+            var node = currencies[i];
+            node['visible'] = false;
+            this.currencies[node['id']] = node
+        }
+        var node_ids = Object.keys(this.currencies);
+
+        for (let i = 0; i < exchanges.length; i++) {
+            var coin_exchanges = exchanges[i];
+
+            for (let j = 0; j < coin_exchanges.length; j++) {
+                var ex = exchanges[i][j];
+                var pair = ex['pair'].split("/");
+                ex['visible'] = false;
+
+                if (node_ids.includes(pair[0]) && node_ids.includes(pair[1])) {
+                    this.exchanges[ex['pair'] + ex['source']] = ex
+                }
+            }
+        }
+
+        this.exchanges_total = {};
+
+
+        var count = 0;
+        for (var i = 0; i < node_ids.length - 1; i++) {
+            var n1 = node_ids[i];
+            for (var j = i + 1; j < node_ids.length; j++) {
+                var n2 = node_ids[j];
+                for (var key in this.exchanges) {
+                    if (key.indexOf(n1) != -1 && key.indexOf(n2) != -1) {
+                        var pair = n1 + '/' + n2;
+                        var volume = parseFloat(this.exchanges[key]['volume24h']);
+                        var existingVolume = 0;
+                        if (typeof this.exchanges_total[pair] != "undefined") {
+                            existingVolume = this.exchanges_total[pair]['volume'];
+                        } else {
+                            count = count + 1;
+                            this.exchanges_total[pair] = {};
+                        }
+
+                        this.exchanges_total[pair]['volume'] = volume + existingVolume;
+                    }
+                }
+            }
+        }
+
+
+        console.log(count);
     }
 
 
@@ -16,11 +62,12 @@ class Graph {
         div.style.height = "100%";
         div.style.left = "0";
         div.style.top = "0";
-        div.style.paddingLeft = "200px";
         div.style.position = "fixed";
         div.style.zIndex = "-1";
         div.style.background = "#000";
         div.style.alignContent="center";
+
+        var curr = this.currencies;
 
 
         cy = window.cy = cytoscape({
@@ -32,7 +79,7 @@ class Graph {
                     return node.degree();
                 },
                 levelWidth: function( nodes ){
-                    return 10;
+                    return 3;
                 }
             },
 
@@ -58,10 +105,10 @@ class Graph {
                 .selector('edge')
                 .style({
                     'curve-style': 'bezier',
-                    'opacity': 0.666,
+                    //'opacity': 0.666,
                     'width': 'data(strength)',
-                    'line-color': 'data(faveColor)',
-                    'target-arrow-shape': 'triangle'
+//                    'line-color': 'data(faveColor)',
+ //                   'target-arrow-shape': 'triangle'
 
                 })
                 .selector(':selected')
@@ -80,16 +127,12 @@ class Graph {
     _setNodes() {
         var result = [];
 
-        for(let i=0; i<this.currencies.length; i++) {
-            var value = Math.log(parseFloat(this.currencies[i]['volume-btc']))*10
+        for(var key in this.currencies) {
+            var node = this.currencies[key];
+            node['visible'] = true;
 
-            this.currencies[i]['width'] =  Math.round(value);
-            this.currencies[i]['strength'] = value/3;
-
-            result.push({data: this.currencies[i]});
-            console.log(this.currencies[i]['width']);
-            //Keep track of existing nodes
-            this.currencieIds.push(this.currencies[i]['id']);
+            var value = Math.log(parseFloat(node['volume-btc']))*10;
+            result.push({data: {id: key, width: value, strength: value/3}});
         }
 
         return result
@@ -97,15 +140,14 @@ class Graph {
 
     _setEdges() {
         var result = [];
+        var node_ids = Object.keys(this.currencies);
+        for (var key in this.exchanges_total) {
+            var edge = this.exchanges_total[key];
+            var pair = key.split("/");
 
-        for (let i = 0; i < this.exchanges.length; i++) {
-            for (let j = 0; j < this.exchanges[i].length; j++) {
-                var pair = this.exchanges[i][j]['pair'].split("/");
-
-                //Set edges only between existing nodes
-                if(this.currencieIds.includes(pair[0]) && this.currencieIds.includes(pair[1])) {
-                    result.push({data: {source: pair[0], target: pair[1], faveColor: '#6FB1FC', strength: 1}});
-                }
+            if(node_ids.includes(pair[0]) && node_ids.includes(pair[1])) {
+                edge['visible'] = true;
+                result.push({data: {id: key, source: pair[0], target: pair[1], faveColor: '#6FB1FC', strength: 1}});
             }
         }
 
@@ -113,63 +155,55 @@ class Graph {
     }
 
     removeNode(id) {
-        var ns = []
-        var es = []
+        var node_to_remove;
+        var es = [];
+
         cy.nodes().forEach(function (node) {
             if ((node.data('id') === id)) {
-                ns.push(node);
-
+                node_to_remove = node;
             }
         });
 
         cy.edges().forEach(function (edge) {
             if ((edge.data('source') === id) || (edge.data('target') === id)) {
-                es.push(edge);
+              es.push(edge);
 
             }
         });
 
-        for (let i = 0; i < ns.length; i++) {
-            this.removedNodes.push(ns[i]);
-        }
+        if(typeof node_to_remove != "undefined") {
+            this.currencies[node_to_remove.data('id')]['node'] = node_to_remove;
+            this.currencies[node_to_remove.data('id')]['visible'] = false;
 
-        for (let i = 0; i < es.length; i++) {
-            this.removedEdges.push(es[i]);
+            for (let i = 0; i < es.length; i++) {
+                var edge = this.exchanges[es[i].data('id')];
+                edge['edge'] = es[i];
+                edge['visible'] = false;
+            }
+            cy.remove("#"+id);
         }
-
-        var index = this.currencieIds.indexOf(id);
-        if (index > -1) {
-            console.log("here");
-            this.currencieIds.splice(index, 0);
-            console.log(this.currencieIds);
-        }
-
-        cy.remove("#"+id);
     }
 
     addNode(id) {
-        for (let i = 0; i < this.removedNodes.length; i++) {
-            var node = this.removedNodes[i];
-            if(node.data("id") === id) {
-                cy.add(node);
-                this.currencieIds.push(id);
-            }
-        }
+        var node_to_add = this.currencies[id];
 
-        for (let i = 0; i < this.removedEdges.length; i++) {
-             var edge = this.removedEdges[i];
-             var source_id = edge.data('source');
-             var target_id = edge.data('target');
+        if(typeof node_to_add != "undefined" && !node_to_add['visible']) {
+            node_to_add['visible'] = true;
+            cy.add(node_to_add['node']);
 
-            if((source_id === id) || (target_id === id)) {
-                console.log(source_id);
-                console.log(target_id);
+            //Add the edges
+            for(var key in this.exchanges) {
+                var edge = this.exchanges[key];
+                if(key.indexOf(id) !== -1 && !edge['visible']) {
+                    var edge_to_add = edge['edge'];
+                    var source_id = edge_to_add.data('source');
+                    var target_id = edge_to_add.data('target');
 
-                if(this.currencieIds.includes(source_id) && this.currencieIds.includes(target_id)) {
-                    cy.add(edge);
+                    if(this.currencies[source_id]['visible'] && this.currencies[target_id]['visible']) {
+                        cy.add(edge_to_add);
+                    }
                 }
             }
         }
-
     }
 }
