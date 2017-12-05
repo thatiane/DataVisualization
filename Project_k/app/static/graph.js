@@ -114,18 +114,19 @@ class Graph {
             }
             document.getElementsByClassName("edgeText")[0].innerHTML = text
         });
-        cy.on('mouseover', 'node', function (evt) {
-            console.log("text");
-        });
-        cy.on('mouseout', 'node', function (evt) {
-            console.log("text2");
-        });
-        cy.on('mouseover', 'edge', function (evt) {
-            console.log("text");
-        });
-        cy.on('mouseout', 'edge', function (evt) {
-            console.log("text2");
-        });
+        cy.elements().qtip({
+                content: function(){ return this.id() },
+                position: {
+                    my: 'top right',
+                    at: 'bottom center',
+                },
+                show: {
+                    event: 'mouseover'
+                },
+                hide: {
+                    event: 'mouseout'
+                },
+            });
     }
 
     _setNodes() {
