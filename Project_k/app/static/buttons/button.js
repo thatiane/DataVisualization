@@ -3,14 +3,14 @@ function accordion(nb_accordion, text, heights) {
     for(let i = 0; i < nb_accordion; i ++){
         let box = "box" + i
 
-        let deploy_scrollBox = d3.select("body")
-                                .append("button")
+        let insidebox = d3.select("body").selectAll(".slideBar_box")
+
+        let deploy_scrollBox = insidebox.append("button")
                                     .attr("class", "accordion")
                                     .text(text[i])
 
 
-        d3.select("body")
-            .append("div")
+        insidebox.append("div")
                 .attr("class", box)
                 .style("width", 160+"px")
                 .style("height", 0+"px")
@@ -26,13 +26,16 @@ function accordion(nb_accordion, text, heights) {
         acc[i].onclick = function() {
             this.classList.toggle("active");
             let panel = this.nextElementSibling;
+            let parent = this.parentElement
             let transition = "all 0.8s"
             if (panel.style.height != 0 + "px"){
                 panel.style.height = 0 + "px";
-                panel.style.transition = transition
+                panel.style.transition = transition;
+                this.parentElement.style.height = parseInt(parent.style.height) - heights[i] + "px";
             } else {
                 panel.style.height = heights[i] + "px";
-                panel.style.transition = transition
+                panel.style.transition = transition;
+                this.parentElement.style.height = parseInt(parent.style.height) + heights[i] + "px";
             }
         }
     }

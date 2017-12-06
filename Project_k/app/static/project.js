@@ -11,6 +11,7 @@ promise.then((data) => {
 
     console.log(currencies)
     console.log(volumes[0])
+    slideBar()
     let box_heights = [520, 400,200, 200,]
     accordion(4, ["Select Node", "Select Market", "Nodes", "Edges"], box_heights);
 
