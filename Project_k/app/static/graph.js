@@ -114,19 +114,56 @@ class Graph {
             }
             document.getElementsByClassName("edgeText")[0].innerHTML = text
         });
-        cy.elements().qtip({
-                content: function(){ return this.id() },
-                position: {
+        cy.nodes().qtip({
+                content: function(){
+                    console.log(this._private.data);
+                    let change = this._private.data["change-usd"]
+                    let name = this._private.data.name
+                    let price = this._private.data["price-usd"]
+                    let volume = this._private.data["volume-usd"]
+                    let result = "<b>" +name + "</b> <br/> change in usd: " + change + "<br/> price in usd: " + price + "<br/> volume in usd: " + volume;
+
+                    return result
+
+                },position: {
                     my: 'top right',
-                    at: 'bottom center',
-                },
-                show: {
+                    at: 'bottom center'
+                },show: {
                     event: 'mouseover'
-                },
-                hide: {
+                },hide: {
                     event: 'mouseout'
-                },
+                }
             });
+
+        cy.edges().qtip({
+                content: function(){
+                    console.log(this._private.data);
+                    let s = this._private.data.source;
+                    let t = this._private.data.target;
+                    let v = 0;
+                    let result = "Source = " + s + "<br/> Target = " + t + "<br/> Volume = " + "v";
+
+                    return result
+
+                },position: {
+                    /*target: 'screen',*/
+                    my:'left center',
+			        at:'left center',
+                    /* adjust: {
+ 				           mouse: true,
+ 				           screen: false,
+ 				           resize: false
+ 			         }*/
+                },show: {
+                    event: 'mouseover'
+                },hide: {
+                    event: 'mouseout'
+                }/*,style: {
+                    left: "200px",
+                    top: "200px"
+                }*/
+            });
+
     }
 
     _setNodes() {

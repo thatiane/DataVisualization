@@ -21,10 +21,9 @@ body{
     background-color: red;
     border-color: red;
     border-width: 2px;
-    opacity: 0;
+    line-height: 16px;
     transition: opacity 0.8s;
 }
 .qtip:hover {
-    visibility: visible;
-    opacity: 1;
+
 }
