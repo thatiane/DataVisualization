@@ -52,7 +52,6 @@ class Graph {
         }
 
 
-        console.log(count);
     }
 
 
@@ -130,7 +129,7 @@ class Graph {
             var node = this.currencies[key];
             node['visible'] = true;
 
-            var value = Math.log(parseFloat(node['volume-btc']))*10;
+            var value = Math.abs(Math.log(parseFloat(node['volume-btc']))*10);
             result.push({data: {id: key, width: value, strength: value/3}});
         }
 
@@ -146,9 +145,7 @@ class Graph {
 
             if(node_ids.includes(pair[0]) && node_ids.includes(pair[1])) {
                 edge['visible'] = true;
-                console.log()
                 var edge_size = Math.log(edge['volume'] + 3)/Math.log(3);
-                console.log(edge_size);
 
                 result.push({data: {id: key, source: pair[0], target: pair[1], faveColor: '#6FB1FC', strength: edge_size}});
             }
