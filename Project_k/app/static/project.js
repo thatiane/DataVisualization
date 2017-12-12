@@ -9,15 +9,22 @@ promise.then((data) => {
     currencies = parseCurrencies(data[0]);
     volumes = parseVolumes(data[1]);
 
-    console.log(currencies)
-    console.log(volumes[0])
+    //[currencies_dict, exchanges_dict, exchanges_total_dict]
+    const d = dataToDict(currencies, volumes)
+    const currencies_dict = d[0];
+    const exchanges_dict = d[1];
+    const exchanges_total_dict = d[2];
+
+    const heatmap = new Heatmap(currencies_dict, exchanges_dict, exchanges_total_dict);
+    heatmap.showHeatmap();
+
     slidebar()
     let box_heights = [520, 400,200, 200,]
     accordion(4, ["Select Node", "Select Market", "Nodes", "Edges"], box_heights);
 
     //Create and show graph
-    const graph = new Graph(currencies, volumes);
-    graph.showGraph();
+    const graph = new Graph(currencies_dict, exchanges_dict, exchanges_total_dict);
+    //graph.showGraph();
 
     let market = new Object();
     let market_list = [];
@@ -27,22 +34,21 @@ promise.then((data) => {
             if(!(key in market)){
                market[key] = key
                market_list.push([key, key])
-
             }
         }
     }
 
     //Show UI
 
-    currencies_name_id = currencies.map(x=>[x['id'],x['name']])
+    currencies_name_id = currencies.map(x=>[x['id'],x['name']]);
 
     const scrollBoxBouton1 = new ScrollBoxBouton(currencies_name_id, 0, box_heights[0], graph, "checkNode");
     scrollBoxBouton1.showScrollBoxBouton();
-    scrollBoxBouton1.clickNode()
+    scrollBoxBouton1.clickNode();
 
     const scrollBoxBouton2 = new ScrollBoxBouton(market_list, 1, box_heights[1], graph, "checkMarket");
     scrollBoxBouton2.showScrollBoxBouton();
-    scrollBoxBouton2.clickMarket()
+    scrollBoxBouton2.clickMarket();
 
     const scrollBox1 = new ScrollBox(2, box_heights[2], true);
     scrollBox1.showScrollBox();

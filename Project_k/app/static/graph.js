@@ -1,59 +1,10 @@
 class Graph {
 
-    constructor(currencies, exchanges) {
-        this.currencies = {};
-        this.exchanges = {};
-
-        for (let i = 0; i < currencies.length; i++) {
-            var node = currencies[i];
-            node['visible'] = false;
-            this.currencies[node['id']] = node
-        }
-        var node_ids = Object.keys(this.currencies);
-
-        for (let i = 0; i < exchanges.length; i++) {
-            var coin_exchanges = exchanges[i];
-
-            for (let j = 0; j < coin_exchanges.length; j++) {
-                var ex = exchanges[i][j];
-                var pair = ex['pair'].split("/");
-                ex['visible'] = false;
-
-                if (node_ids.includes(pair[0]) && node_ids.includes(pair[1])) {
-                    this.exchanges[ex['pair'] + ex['source']] = ex
-                }
-            }
-        }
-
-        this.exchanges_total = {};
-
-
-        var count = 0;
-        for (var i = 0; i < node_ids.length - 1; i++) {
-            var n1 = node_ids[i];
-            for (var j = i + 1; j < node_ids.length; j++) {
-                var n2 = node_ids[j];
-                for (var key in this.exchanges) {
-                    if (key.indexOf(n1) != -1 && key.indexOf(n2) != -1) {
-                        var pair = n1 + '/' + n2;
-                        var volume = parseFloat(this.exchanges[key]['volume24h']);
-                        var existingVolume = 0;
-                        if (typeof this.exchanges_total[pair] != "undefined") {
-                            existingVolume = this.exchanges_total[pair]['volume'];
-                        } else {
-                            count = count + 1;
-                            this.exchanges_total[pair] = {};
-                        }
-
-                        this.exchanges_total[pair]['volume'] = volume + existingVolume;
-                    }
-                }
-            }
-        }
-
-
+    constructor(currencies_dict, exchanges_dict, exchanges_total_dict) {
+        this.currencies = currencies_dict;
+        this.exchanges = exchanges_dict;
+        this.exchanges_total = exchanges_total_dict;
     }
-
 
     showGraph() {
         var div = document.getElementById("graph");
