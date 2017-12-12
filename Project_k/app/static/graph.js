@@ -57,6 +57,7 @@ class Graph {
 
     showGraph() {
         var div = document.getElementById("graph");
+        var acc_width = document.getElementsByClassName("accordion")[0].offsetWidth
         div.style.width = "100%";
         div.style.height = "100%";
         div.style.left = "0";
@@ -120,6 +121,117 @@ class Graph {
                 edges: this._setEdges()
             }
         });
+
+        let coins = this.currencies
+
+        let obj_node = new Object();
+        cy.on('click', 'node', function (evt) {
+             let data = this._private.data
+             let key = data.id
+             let node = coins[key]
+             let value = [node["change-usd"],node["price-usd"], node["volume-usd"]]
+
+             if(key in obj_node){
+                delete obj_node[key];
+             }else{
+                 obj_node[key] = value
+             }
+             let text = "";
+             let size_node = Object.keys(obj_node).length;
+             if(size_node == 0){
+                 text = text.concat("Node")
+             }else{
+                 for (let i = 0; i < size_node; i++) {
+                     let key_obj = Object.keys(obj_node)[i]
+                     text = text.concat("<b><u>"+key_obj +"</u></b><br/> change in usd: "+obj_node[key_obj][0]+"<br/> price in usd: "+obj_node[key_obj][1]+"<br/> volume in usd: " +obj_node[key_obj][2]+"<br/> <br/>");
+                 }
+             }
+             document.getElementsByClassName("nodeText")[0].innerHTML = text
+        });
+
+
+        let obj_edge = new Object();
+        //let edg = this.exchanges;
+        let edg_tot = this.exchanges_total
+        cy.on('click', 'edge', function (evt) {
+            let source = this._private.data.source
+            let target = this._private.data.target
+            let key = source+"/"+target;
+
+            if(key in obj_edge){
+               delete obj_edge[key];
+            }else{
+                obj_edge[key] = key
+            }
+
+            let text = "";
+            let size_edge = Object.keys(obj_edge).length;
+            if(size_edge == 0){
+                text = text.concat("Source = s <br/> Target = t <br/> Volume = v");
+            }else{
+                for (let i = 0; i < size_edge; i++) {
+                    let key_obj = Object.keys(obj_edge)[i]
+                    let res = key_obj.split("/");
+                    let s = res[0]
+                    let t = res[1]
+                    let v = edg_tot[s+"/"+t].volume
+                    text = text.concat("Source = <b>" + s + "</b><br/> Target = <b>" + t + "</b><br/> Volume = " + v + "<br/> <br/>");
+                }
+            }
+            document.getElementsByClassName("edgeText")[0].innerHTML = text
+        });
+        cy.nodes().qtip({
+                content: function(){
+                    let node = coins[this._private.data['id']]
+                    let change = node["change-usd"]
+                    let name = node['name']
+                    let price = node["price-usd"]
+                    let volume = node["volume-usd"]
+                    let result = "<b>" +name + "</b> <br/> change in usd: " + change + "<br/> price in usd: " + price + "<br/> volume in usd: " + volume;
+
+                    return result
+
+                },position: {
+                    my: 'top right',
+                    at: 'bottom center'
+                },show: {
+                    event: 'mouseover'
+                },hide: {
+                    event: 'mouseout'
+                }
+            });
+
+        cy.edges().qtip({
+                content: {
+                    /*console.log(this._private.data);
+                    let s = this._private.data.source;
+                    let t = this._private.data.target;
+                    let v = edg_tot[s+"/"+t].volume;
+                    let result = "Source = " + s + "<br/> Target = " + t + "<br/> Volume = " + v;
+                    */
+                    text: 'I follow the mouse whilst I\'m visible. Weeeeee!',
+                    //console.log("in");
+
+                    //return result
+
+                },position: {
+                    //target: this,
+
+                    viewport: ('.egde'),
+                    adjust: {
+                        method: 'none shift',
+                        mouse: true
+                    }
+                },show: {
+                    event: 'mouseover'
+                },hide: {
+                    event: 'mouseout'
+                }/*,style: {
+                    left: "200px",
+                    top: "200px"
+                }*/
+            });
+
     }
 
     _setNodes() {

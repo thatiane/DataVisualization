@@ -1,0 +1,24 @@
+button.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    width: 180px;
+    position : relative;
+    left: 5px;
+    height: 23px;
+    text-align: left;
+    font-size: 15px;
+}
+button.accordion.active, button.accordion:hover {
+    background-color: #ccc;
+}
+button.accordion:after {
+    content: '\002B';
+    color: #777;
+    font-weight: bold;
+    float: right;
+    margin-left: 5px;
+}
+button.accordion.active:after {
+    content: "\2212";
+}

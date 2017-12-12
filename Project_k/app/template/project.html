@@ -5,17 +5,24 @@
         <script src="https://d3js.org/d3.v3.js"></script>
         <script src="https://d3js.org/d3.v4.0.0-alpha.40.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.2.6/cytoscape.min.js"></script>
-        <script src="https://cdn.rawgit.com/cytoscape/cytoscape.js-cola/1.6.0/cola.js"></script>
-        <script src="https://cdn.rawgit.com/cytoscape/cytoscape.js-cola/1.6.0/cytoscape-cola.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+        <link href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css" rel="stylesheet" type="text/css">
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.js"></script>
+        <script src="https://cdn.rawgit.com/cytoscape/cytoscape.js-qtip/2.7.0/cytoscape-qtip.js"></script>
 
         <title>Crypto Currencies</title>
-        <link rel="stylesheet" href="../static/project.css" />
+        <link rel="stylesheet" href="../static/project.css"/>
+        <link rel="stylesheet" href="../static/slidebar/slidebar.css"/>
+        <link rel="stylesheet" href="../static/scrollbox/scrollbox.css"/>
+        <link rel="stylesheet" href="../static/buttons/button.css"/>
     </head>
 
     <body>
       {% assets "javascript_js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-        <script src="../static/scrollbox.js"></script>
+        <script src="../static/slidebar/slidebar.js"></script>
+        <script src="../static/buttons/button.js"></script>
+        <script src="../static/scrollbox/scrollbox.js"></script>
         <script src="../static/graph.js"></script>
         <script src="../static/utils.js"></script>
       {% endassets %}
