@@ -1,4 +1,4 @@
-function slideBar() {
+function slidebar() {
 
     let deploy_slideBar = d3.select("body")
                             .append("button")

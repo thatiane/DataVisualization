@@ -100,15 +100,12 @@ class ScrollBoxBouton extends ScrollBox{
         inp.onclick = function() {
             let checked = this.checked;
             let value = this.value;
-            console.log(value);
             if(checked) {
                 // change value for market here too
                 //graph.addNode(value);
-                console.log(value);
             }
              else {
                 //graph.removeNode(value);
-                console.log(value);
             }
         }
     }
