@@ -151,10 +151,12 @@ class Graph {
 
 
         let obj_edge = new Object();
+        //let edg = this.exchanges;
+        let edg_tot = this.exchanges_total
         cy.on('click', 'edge', function (evt) {
             let source = this._private.data.source
             let target = this._private.data.target
-            let key = source+"_"+target;
+            let key = source+"/"+target;
 
             if(key in obj_edge){
                delete obj_edge[key];
@@ -169,10 +171,11 @@ class Graph {
             }else{
                 for (let i = 0; i < size_edge; i++) {
                     let key_obj = Object.keys(obj_edge)[i]
-                    let res = key_obj.split("_");
+                    let res = key_obj.split("/");
                     let s = res[0]
                     let t = res[1]
-                    text = text.concat("Source = <b>" + s + "</b><br/> Target = <b>" + t + "</b><br/> Volume = " + "v" + "<br/> <br/>");
+                    let v = edg_tot[s+"/"+t].volume
+                    text = text.concat("Source = <b>" + s + "</b><br/> Target = <b>" + t + "</b><br/> Volume = " + v + "<br/> <br/>");
                 }
             }
             document.getElementsByClassName("edgeText")[0].innerHTML = text
@@ -199,24 +202,26 @@ class Graph {
             });
 
         cy.edges().qtip({
-                content: function(){
-                    console.log(this._private.data);
+                content: {
+                    /*console.log(this._private.data);
                     let s = this._private.data.source;
                     let t = this._private.data.target;
-                    let v = 0;
-                    let result = "Source = " + s + "<br/> Target = " + t + "<br/> Volume = " + "v";
+                    let v = edg_tot[s+"/"+t].volume;
+                    let result = "Source = " + s + "<br/> Target = " + t + "<br/> Volume = " + v;
+                    */
+                    text: 'I follow the mouse whilst I\'m visible. Weeeeee!',
+                    //console.log("in");
 
-                    return result
+                    //return result
 
                 },position: {
-                    /*target: 'screen',*/
-                    my:'left center',
-			        at:'left center',
-                    /* adjust: {
- 				           mouse: true,
- 				           screen: false,
- 				           resize: false
- 			         }*/
+                    //target: this,
+
+                    viewport: ('.egde'),
+                    adjust: {
+                        method: 'none shift',
+                        mouse: true
+                    }
                 },show: {
                     event: 'mouseover'
                 },hide: {
