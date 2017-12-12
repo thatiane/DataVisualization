@@ -121,11 +121,15 @@ class Graph {
                 edges: this._setEdges()
             }
         });
+
+        let coins = this.currencies
+
         let obj_node = new Object();
         cy.on('click', 'node', function (evt) {
              let data = this._private.data
-             let key = data.name
-             let value = [data["change-usd"],data["price-usd"], data["volume-usd"]]
+             let key = data.id
+             let node = coins[key]
+             let value = [node["change-usd"],node["price-usd"], node["volume-usd"]]
 
              if(key in obj_node){
                 delete obj_node[key];
@@ -144,6 +148,7 @@ class Graph {
              }
              document.getElementsByClassName("nodeText")[0].innerHTML = text
         });
+
 
         let obj_edge = new Object();
         cy.on('click', 'edge', function (evt) {
@@ -174,11 +179,11 @@ class Graph {
         });
         cy.nodes().qtip({
                 content: function(){
-                    console.log(this._private.data);
-                    let change = this._private.data["change-usd"]
-                    let name = this._private.data.name
-                    let price = this._private.data["price-usd"]
-                    let volume = this._private.data["volume-usd"]
+                    let node = coins[this._private.data['id']]
+                    let change = node["change-usd"]
+                    let name = node['name']
+                    let price = node["price-usd"]
+                    let volume = node["volume-usd"]
                     let result = "<b>" +name + "</b> <br/> change in usd: " + change + "<br/> price in usd: " + price + "<br/> volume in usd: " + volume;
 
                     return result
