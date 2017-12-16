@@ -1,14 +1,58 @@
 class Graph {
 
     constructor(currencies, exchanges) {
-        this.currencies = {};
-        this.exchanges = {};
+      this.currencies = currencies;
 
-        for (let i = 0; i < currencies.length; i++) {
+      this.exchanges = {};
+
+      var exchanges = [].concat.apply([], exchanges);
+
+      // Temp code, removes USD from exchanges
+      exchanges = _.filter(exchanges, (exchange) => {
+        var currencies_ids = _.map(currencies, (curr) => { return curr.id; });
+
+        var curr1 = exchange.pair.split('/')[0];
+        var curr2 = exchange.pair.split('/')[1];
+
+        return currencies_ids.includes(curr1) && currencies_ids.includes(curr2);
+      });
+
+      var exchanges_grouped = _.groupBy(exchanges, (exchange) => {
+        var pair = exchange.pair;
+
+        return pair.split('/').sort();
+      });
+
+      var merged_exchanges = [];
+
+      for (var group in exchanges_grouped) {
+
+        var reducedGroup = _.reduce(exchanges_grouped[group], function(acc, exchange) {
+          return {volume24h: acc.volume24h + exchange.volume24h, price: acc.price + exchange.price, size: acc.size + 1.0}
+        }, {volume24h:0.0, price:0.0, size:0.0});
+
+        reducedGroup.price = reducedGroup.price / reducedGroup.size;
+
+        var source = group.split(',')[0];
+        var target = group.split(',')[1];
+
+        merged_exchanges = merged_exchanges.concat({source: source, target: target, value: 1, volume24h: reducedGroup.volume24h, price: reducedGroup.price});
+        //merged_exchanges = merged_exchanges.concat({source: source, target: target, value: 1});
+
+      }
+
+      this.mergedExchanges = merged_exchanges;
+
+        /*for (let i = 0; i < currencies.length; i++) {
             var node = currencies[i];
             node['visible'] = false;
             this.currencies[node['id']] = node
         }
+
+
+
+
+
         var node_ids = Object.keys(this.currencies);
 
         for (let i = 0; i < exchanges.length; i++) {
@@ -20,7 +64,7 @@ class Graph {
                 ex['visible'] = false;
 
                 if (node_ids.includes(pair[0]) && node_ids.includes(pair[1])) {
-                    this.exchanges[ex['pair'] + ex['source']] = ex
+                    this.exchanges[ex['pair'] + ex['source']];
                 }
             }
         }
@@ -49,77 +93,88 @@ class Graph {
                     }
                 }
             }
-        }
+        }*/
 
 
     }
 
 
     showGraph() {
-        var div = document.getElementById("graph");
-        div.style.width = "100%";
-        div.style.height = "100%";
-        div.style.left = "0";
-        div.style.top = "0";
-        div.style.position = "fixed";
-        div.style.zIndex = "-1";
-        div.style.background = "#000";
-        div.style.alignContent="center";
-
-        var curr = this.currencies;
 
 
-        cy = window.cy = cytoscape({
-            container: div,
 
-            layout: {
-               name: 'concentric',
-                concentric: function( node ){
-                    return node.degree();
-                },
-                levelWidth: function( nodes ){
-                    return 3;
-                }
-            },
+      var svg = d3.select("#graph").call(d3.zoom().on("zoom", function () {
+    svg.attr("transform", d3.event.transform)
+ }))
+ .append("g"),
+          width = +svg.attr("width"),
+          height = +svg.attr("height");
 
-            style: cytoscape.stylesheet()
-                .selector('node')
-                .style({
-                    'shape': 'ellipse',
-                    'width': 'data(width)',
-                    'height': 'data(width)',
-                    'content': 'data(id)',
-                    'text-valign': 'center',
-                    'font-size': 'data(strength)',
-                    'text-outline-width': 1,
-                    'text-outline-color': '#afb1b0',
-                    'background-color': '#afb1b0',
-                    'color': '#fff',
-                })
-                .selector(':selected')
-                .style({
-                    'border-width': 2,
-                    'border-color': '#525453'
-                })
-                .selector('edge')
-                .style({
-                    'curve-style': 'bezier',
-                    'opacity': 0.666,
-                    'width': 'data(strength)',
-                    'line-color': 'data(faveColor)',
+      //var color = d3.scaleOrdinal(d3.schemeCategory20);
 
-                })
-                .selector(':selected')
-                .style({
-                    'border-width': 2,
-                    'border-color': '#525453'
-                }),
+      var simulation = d3.forceSimulation()
+          .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(10000).strength(0.01))
+          .force("charge", d3.forceManyBody())
+          .force("center", d3.forceCenter(width / 2, height / 2));
 
-            elements: {
-                nodes: this._setNodes(),
-                edges: this._setEdges()
-            }
-        });
+        var link = svg.append("g")
+            .attr("class", "links")
+          .selectAll("line")
+          .data(this.mergedExchanges)
+          .enter().append("line")
+            .attr("stroke-width", function(d) { return 3 * Math.log(d['volume24h']);});
+
+        var node = svg.append("g")
+            .attr("class", "nodes")
+          .selectAll("circle")
+          .data(this.currencies)
+          .enter().append("circle")
+            .attr("r", function(d) { return 10 * Math.log(d['volume-usd']);})
+            .attr("fill", 'black')
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        node.append("title")
+            .text(function(d) { return d.id; });
+
+        simulation
+            .nodes(this.currencies)
+            .on("tick", ticked);
+
+        simulation.force("link")
+            .links(this.mergedExchanges);
+
+        function ticked() {
+          link
+              .attr("x1", function(d) { return d.source.x; })
+              .attr("y1", function(d) { return d.source.y; })
+              .attr("x2", function(d) { return d.target.x; })
+              .attr("y2", function(d) { return d.target.y; });
+
+          node
+              .attr("cx", function(d) { return d.x; })
+              .attr("cy", function(d) { return d.y; });
+        }
+
+      function dragstarted(d) {
+        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+      }
+
+      function dragged(d) {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+      }
+
+      function dragended(d) {
+        if (!d3.event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+      }
+
     }
 
     _setNodes() {

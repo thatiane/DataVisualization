@@ -9,7 +9,7 @@ promise.then((data) => {
     currencies = parseCurrencies(data[0]);
     volumes = parseVolumes(data[1]);
 
-    console.log(currencies)
+    //console.log(currencies)
 
 
     //Create and show graph
