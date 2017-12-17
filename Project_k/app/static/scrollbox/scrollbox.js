@@ -97,15 +97,61 @@ class ScrollBoxBouton extends ScrollBox{
     clickMarket(){
         let inp = document.getElementsByClassName(this.check_name)
         let graph = this.graph
-        inp.onclick = function() {
-            let checked = this.checked;
-            let value = this.value;
-            if(checked) {
-                // change value for market here too
-                //graph.addNode(value);
-            }
-             else {
-                //graph.removeNode(value);
+        for (let i = 0; i < inp.length; i++) {
+            inp[i].onclick = function() {
+                let checked = this.checked;
+                let value = this.value;
+                let ex = graph.exchanges
+                let keys = Object.keys(ex)
+                if(checked) {
+                    for (let j = 0; j < keys.length; j++) {
+                        if(keys[j].includes(value)){
+                            let key = keys[j]
+                            let pair = ex[key].pair
+                            let s_t = pair.split("/");
+                            let nb_of_actif_market = 0
+
+                            for (var k = 0; k < s_t.length; k++) {
+                                graph.node_markets[s_t[k]][value] = true
+                                let markets_keys = Object.keys(graph.node_markets[s_t[k]])
+                                nb_of_actif_market = 0
+
+                                for (let l = 0; l < markets_keys.length; l++) {
+                                    if(graph.node_markets[s_t[k]][markets_keys[l]]){
+                                        nb_of_actif_market += 1;
+                                    }
+                                }
+                                if(nb_of_actif_market == 1){
+                                    graph.addNode(s_t[k]);
+                                }
+                            }
+                        }
+                    }
+                }else {
+                    for (let j = 0; j < keys.length; j++) {
+                        if(keys[j].includes(value)){
+                            let key = keys[j]
+                            let pair = ex[key].pair
+                            let s_t = pair.split("/");
+                            let nb_of_actif_market = 0
+
+                            for (var k = 0; k < s_t.length; k++) {
+                                graph.node_markets[s_t[k]][value] = false
+                                let markets_keys = Object.keys(graph.node_markets[s_t[k]])
+                                nb_of_actif_market = 0
+
+                                for (let l = 0; l < markets_keys.length; l++) {
+                                    if(graph.node_markets[s_t[k]][markets_keys[l]]){
+                                        nb_of_actif_market += 1;
+                                    }
+                                }
+                                if(nb_of_actif_market < 1){
+                                    graph.removeNode(s_t[k]);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

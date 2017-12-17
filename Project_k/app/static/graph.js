@@ -27,7 +27,6 @@ class Graph {
 
         this.exchanges_total = {};
 
-
         var count = 0;
         for (var i = 0; i < node_ids.length - 1; i++) {
             var n1 = node_ids[i];
@@ -50,8 +49,27 @@ class Graph {
                 }
             }
         }
+        this.node_markets = {};
 
+        let keys =  Object.keys(this.exchanges)
+        for (let i = 0; i < keys.length; i++){
+            let key = keys[i];
+            let pair = this.exchanges[key].pair;
+            let market = this.exchanges[key].source
+            let s_t = pair.split("/");
 
+            for (var j = 0; j < s_t.length; j++) {
+                if(s_t[j] in this.node_markets){
+                    let market_in_node = this.node_markets[s_t[j]]
+                    if(!(market in market_in_node)){
+                        this.node_markets[s_t[j]][market] = true;
+                    }
+                }else{
+                    this.node_markets[s_t[j]] = {};
+                    this.node_markets[s_t[j]][market] = true
+                }
+            }
+        }
     }
 
 

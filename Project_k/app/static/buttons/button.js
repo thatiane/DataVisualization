@@ -57,9 +57,17 @@ function scrollBox_button(idx, graph, check_name){
                             if(check_name == "checkNode"){
                                 graph.addNode(list_to_check[i].value);
                             }else{
-                                // ici mettre la fonction pour les markets
-                                //graph.addNode(list_to_check[i].value);
-                                console.log(list_to_check[i].value);
+                                let keys = Object.keys(graph.node_markets)
+                                for (let j = 0; j < keys.length; j++) {
+                                    graph.node_markets[keys[j]][list_to_check[i].value] = true
+                                }
+                            }
+                        }
+                        if(check_name == "checkMarket"){
+                            let keys = Object.keys(graph.node_markets)
+                            for (let j = 0; j < keys.length; j++) {
+                                let key = keys[j]
+                                graph.addNode(key);
                             }
                         }
                     })
@@ -74,9 +82,17 @@ function scrollBox_button(idx, graph, check_name){
                                 if(check_name == "checkNode"){
                                     graph.removeNode( list_to_check[i].value);
                                 }else{
-                                    // ici mettre la fonction pour les markets
-                                    //graph.removeNode( list_to_check[i].value);
-                                    console.log(list_to_check[i].value)
+                                    let keys = Object.keys(graph.node_markets)
+                                    for (let j = 0; j < keys.length; j++) {
+                                        graph.node_markets[keys[j]][list_to_check[i].value] = false
+                                    }
+                                }
+                            }
+                            if(check_name == "checkMarket"){
+                                let keys = Object.keys(graph.node_markets)
+                                for (let j = 0; j < keys.length; j++) {
+                                    let key = keys[j]
+                                    graph.removeNode(key);
                                 }
                             }
                             let node_text = "Node";
