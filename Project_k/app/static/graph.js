@@ -185,7 +185,7 @@ class Graph {
           }
     }
 
-    _createExchanges(exchanges, currencies) {
+    _createExchanges(currencies, exchanges) {
         var exchanges = [].concat.apply([], exchanges);
         var currencies_ids = _.map(currencies, (curr) => { return curr.id; });
 
@@ -232,5 +232,9 @@ class Graph {
 
         merged_exchanges = _.sortBy(merged_exchanges, ['source', 'target']);
         return merged_exchanges;
+    }
+
+    _createSVG() {
+
     }
 }
