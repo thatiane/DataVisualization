@@ -1,52 +1,12 @@
 class Graph {
 
     constructor(currencies, exchanges) {
+
       this.currencies = currencies;
-
       this.currencies = _.sortBy(this.currencies, 'price-usd');
-
       this.displayedCurrencies = currencies;
 
-      this.exchanges = {};
-
-      var exchanges = [].concat.apply([], exchanges);
-
-      // Temp code, removes USD from exchanges
-      exchanges = _.filter(exchanges, (exchange) => {
-        var currencies_ids = _.map(currencies, (curr) => { return curr.id; });
-
-        var curr1 = exchange.pair.split('/')[0];
-        var curr2 = exchange.pair.split('/')[1];
-
-        return currencies_ids.includes(curr1) && currencies_ids.includes(curr2);
-      });
-
-      var exchanges_grouped = _.groupBy(exchanges, (exchange) => {
-        var pair = exchange.pair;
-
-        return pair.split('/').sort();
-      });
-
-      var merged_exchanges = [];
-
-      for (var group in exchanges_grouped) {
-
-        var reducedGroup = _.reduce(exchanges_grouped[group], function(acc, exchange) {
-          return {volume24h: acc.volume24h + exchange.volume24h, price: acc.price + exchange.price, size: acc.size + 1.0}
-        }, {volume24h: 0.0, price: 0.0, size: 0.0});
-
-        reducedGroup.price = reducedGroup.price / reducedGroup.size;
-
-        var source = group.split(',')[0];
-        var target = group.split(',')[1];
-
-        merged_exchanges = merged_exchanges.concat({source: source, target: target, value: 1, volume24h: reducedGroup.volume24h, price: reducedGroup.price});
-
-        //merged_exchanges = merged_exchanges.concat({source: source, target: target, value: 1});
-
-      }
-
-      merged_exchanges = _.sortBy(merged_exchanges, ['source', 'target']);
+      var merged_exchanges = this._createExchanges(currencies, exchanges);
 
       this.mergedExchanges = merged_exchanges;
       this.displayedLinks = merged_exchanges;
@@ -56,38 +16,40 @@ class Graph {
 
     showGraph() {
 
-      var svg = d3.select("#graph").call(d3.zoom().on("zoom", function () {
-    svg.attr("transform", d3.event.transform)
- }))
- .append("g"),
-          width = +svg.attr("width"),
-          height = +svg.attr("height");
+        var svg = d3.select("#graph")
+                    .call(d3.zoom().on("zoom", function () {
+                        svg.attr("transform", d3.event.transform)
+                    }))
+                    .append("g"),
 
-      //var color = d3.scaleOrdinal(d3.schemeCategory20);
+            width = +svg.attr("width"),
+            height = +svg.attr("height");
 
-      var simulation = d3.forceSimulation()
-          .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(10000).strength(0.01))
-          .force("charge", d3.forceManyBody())
-          .force("center", d3.forceCenter(width / 2, height / 2));
+            //var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+        var simulation = d3.forceSimulation()
+        .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(10000).strength(0.01))
+        .force("charge", d3.forceManyBody())
+        .force("center", d3.forceCenter(width / 2, height / 2));
 
         var link = svg.append("g")
-            .attr("class", "links")
-          .selectAll("line")
-          .data(this.displayedLinks).enter().append("line")
-            .attr("stroke-width", function(d) { return 3 * Math.log(d['volume24h']);});
+        .attr("class", "links")
+        .selectAll("line")
+        .data(this.displayedLinks).enter().append("line")
+        .attr("stroke-width", function(d) { return 3 * Math.log(d['volume24h']);});
 
 
 
         var node = svg.append("g")
-            .attr("class", "nodes")
-          .selectAll("circle")
-          .data(this.displayedCurrencies).enter().append("circle")
-            .attr("r", function(d) { return 10 * Math.log(d['volume-usd']);})
-            .attr("fill", 'black')
-            .call(d3.drag()
-                .on("start", dragstarted)
-                .on("drag", dragged)
-                .on("end", dragended));
+        .attr("class", "nodes")
+        .selectAll("circle")
+        .data(this.displayedCurrencies).enter().append("circle")
+        .attr("r", function(d) { return 10 * Math.log(d['volume-usd']);})
+        .attr("fill", 'black')
+        .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended));
 
 
         node.append("title")
@@ -221,5 +183,54 @@ class Graph {
             d.fx = null;
             d.fy = null;
           }
+    }
+
+    _createExchanges(exchanges, currencies) {
+        var exchanges = [].concat.apply([], exchanges);
+        var currencies_ids = _.map(currencies, (curr) => { return curr.id; });
+
+        //Create links only for existing nodes
+        exchanges = _.filter(exchanges, (exchange) => {
+            var curr1 = exchange.pair.split('/')[0];
+            var curr2 = exchange.pair.split('/')[1];
+
+            return currencies_ids.includes(curr1) && currencies_ids.includes(curr2);
+        });
+
+        //Groups exchanges by source-target id
+        var exchanges_grouped = _.groupBy(exchanges, (exchange) => {
+            var pair = exchange.pair;
+            return pair.split('/').sort();
+        });
+
+        //Merges exchanges between same coins but different markets (source)
+        var merged_exchanges = [];
+
+        for (var group in exchanges_grouped) {
+
+            /*This groups information from different markets.
+            * volume24h is the accumulated volume from the exchanges on every market
+            * price is the mean price of all exchanges between two coins
+            */
+            var reducedGroup = _.reduce(exchanges_grouped[group], function(acc, exchange) {
+                return {volume24h: acc.volume24h + exchange.volume24h,
+                        price: acc.price + exchange.price,
+                        size: acc.size + 1.0}
+
+            }, {volume24h: 0.0, price: 0.0, size: 0.0});
+            reducedGroup.price = reducedGroup.price / reducedGroup.size;
+
+            var source = group.split(',')[0];
+            var target = group.split(',')[1];
+
+            merged_exchanges = merged_exchanges
+                .concat({source: source,
+                    target: target,
+                    value: 1, volume24h: reducedGroup.volume24h,
+                    price: reducedGroup.price});
+        }
+
+        merged_exchanges = _.sortBy(merged_exchanges, ['source', 'target']);
+        return merged_exchanges;
     }
 }
