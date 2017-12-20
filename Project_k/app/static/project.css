@@ -52,7 +52,6 @@ button.accordion {
     background-color: #eee;
     color: #444;
     cursor: pointer;
-    padding: none;
     width: 190px;
     border: none;
     text-align: left;
@@ -74,4 +73,17 @@ button.accordion:after {
 
 button.accordion.active:after {
     content: "\2212";
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow:hidden;
+}
+
+#graph {
+    position: fixed;
+    z-index: -1;
+    top: 0;
+    left: 0;
 }
