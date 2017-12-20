@@ -19,8 +19,8 @@ class Graph {
         var w = window,
             d = document,
             e = d.documentElement,
-            g = d.getElementsByTagName('body')[0],
-            x = (w.innerWidth || e.clientWidth || g.clientWidth),
+            g = d.getElementById('graph'),
+            x = (g.clientWidth),
             y = (w.innerHeight || e.clientHeight || g.clientHeight);
 
         var svg = d3.select("#graph")
@@ -35,7 +35,7 @@ class Graph {
             .force("link", d3.forceLink().id(function (d) {return d.id;}).distance(y / 2.4).strength(0.12))
             .force("collide", d3.forceCollide().radius(15))
             .force("charge", d3.forceManyBody())
-            .force("center", d3.forceCenter(width / 2, height / 2 - 50));
+            .force("center", d3.forceCenter(width / 2.5, height / 2));
 
         var link = svg.append("g")
             .attr("class", "links")

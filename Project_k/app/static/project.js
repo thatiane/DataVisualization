@@ -17,5 +17,5 @@ promise.then((data) => {
     graph.showGraph();
 
     //Show UI
-    scrollBox(currencies.map(x=>[x['id'],x['name']]), graph)
+   // scrollBox(currencies.map(x=>[x['id'],x['name']]), graph)
 });

@@ -5,12 +5,33 @@
         <script src="https://d3js.org/d3.v4.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.4/lodash.min.js"></script>
 
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
         <title>Crypto Currencies</title>
         <link rel="stylesheet" href="../static/project.css" />
     </head>
 
-    <body>
-      <svg id="graph"></svg>
+    <body class="container-fluid"  style="padding:0" >
+
+    <nav class="navbar navbar-default">
+      <div class="container-fluid"  style="padding:0">
+        <div class="navbar-header" style="margin:0">
+          <a class="navbar-brand" href="#"></a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li><a href="/">Visualisation</a></li>
+          <li><a href="#">Process Book</a></li>
+        </ul>
+      </div>
+    </nav>
+
+      <div class="row">
+            <svg id="graph" class="col-sm-10"></svg>
+            <div id="ui" class="col-sm-2"></div>
+      </div>
+
       {% assets "javascript_js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
         <script src="../static/scrollbox.js"></script>
@@ -18,5 +39,9 @@
         <script src="../static/utils.js"></script>
       {% endassets %}
 
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     </body>
 </html>
