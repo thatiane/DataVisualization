@@ -26,20 +26,13 @@ class Graph {
         var svg = d3.select("#graph")
                 .attr("width", x)
                 .attr("height", y)
-                .call(d3.zoom().on("zoom", function () {
-                    svg.attr("transform", d3.event.transform)
-                }))
-                .append("g"),
-
-            width = x,
-            height = y;
+                .call(d3.zoom().on("zoom", function () { svg.attr("transform", d3.event.transform)}))
+                .append("g"), width = +x, height = +y;
 
         //var color = d3.scaleOrdinal(d3.schemeCategory20);
 
         var simulation = d3.forceSimulation()
-            .force("link", d3.forceLink().id(function (d) {
-                return d.id;
-            }).distance(y / 2.4).strength(0.12))
+            .force("link", d3.forceLink().id(function (d) {return d.id;}).distance(y / 2.4).strength(0.12))
             .force("collide", d3.forceCollide().radius(15))
             .force("charge", d3.forceManyBody())
             .force("center", d3.forceCenter(width / 2, height / 2 - 50));
@@ -106,8 +99,6 @@ class Graph {
                     return d.y;
                 });
         }
-
-        this.ticked = ticked();
 
 
         function dragstarted(d) {
