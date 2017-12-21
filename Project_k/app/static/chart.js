@@ -114,6 +114,7 @@ class DataChart {
   }
   
   addDataset(label, value) {
+      if(this.dataset.labels.indexOf(label) === -1) {
  		const currenciesDisplayed = this.dataset.datasets.length;
  
  		if(this.hasChart) {
@@ -123,25 +124,27 @@ class DataChart {
           
         this.chart.canvas.parentNode.style[key] = this.computeHeight(currenciesDisplayed + 1);
       	this.chart.resize();
-    }
+        }
  
-    const colorName = COLOR_NAMES[currenciesDisplayed % COLOR_NAMES.length];
-    const datasetColor = COLORS[colorName];
-    
-  	const newDataset = {
-      label: label,
-      backgroundColor: Chart.helpers.color(datasetColor).alpha(0.5).rgbString(),
-      borderColor: datasetColor,
-      data: [value],
-      datalabels: {
-        anchor: 'end',
-        align: 'start',
-      }
-    };
-       
-    this.dataset.datasets.push(newDataset);
-    this.dataset.labels.push(label);
-    this.updateChart();
+        const colorName = COLOR_NAMES[currenciesDisplayed % COLOR_NAMES.length];
+        const datasetColor = COLORS[colorName];
+
+
+        const newDataset = {
+            label: label,
+            backgroundColor: Chart.helpers.color(datasetColor).alpha(0.5).rgbString(),
+            borderColor: datasetColor,
+            data: [value],
+            datalabels: {
+                anchor: 'end',
+                align: 'start',
+            }
+        };
+
+        this.dataset.datasets.push(newDataset);
+        this.dataset.labels.push(label);
+        this.updateChart();
+    }
   }
   
   resetChart() {
