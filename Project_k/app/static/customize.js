@@ -8,14 +8,14 @@ class InteractiveGraph {
         this.exchanges = exchanges;
 
         //Initialize graph
-        var graph = new Graph(currencies, exchanges);
-        graph.showGraph();
+        this.graph = new Graph(currencies, exchanges);
+        this.graph.showGraph();
 
-        this._init(currencies.map(c=>c['name']), exchanges, false);
+        this._init(this.currencies, this.exchanges, this.graph);
     }
 
-    _init(currencies, exchanges, id) {
-        var completeCurrencies = this.currencies;
+    _init(currencies, exchanges, graph) {
+        const currencyNames = currencies.map(x=>x['name']);
 
         setOnClickListeners();
         setExpandableList();
@@ -45,34 +45,23 @@ class InteractiveGraph {
                     var chosenCurrencies = [].filter.call(eles, function (x) {
                         return x.style.backgroundColor == SELECT_COLOR
                     });
-                    var chosenNodes = completeCurrencies.filter(x => [].map.call(chosenCurrencies, function (el) {
+                    var chosenNodes = currencies.filter(x => [].map.call(chosenCurrencies, function (el) {
                         return el.dataset.value
                     }).indexOf(x['name']) != -1);
 
-                    restartGraph(chosenNodes, exchanges);
+                    graph.restartGraph(chosenNodes, exchanges);
                 });
 
                 return domElement;
             };
 
-            currencies.forEach(currency => list.appendChild(genElem(currency)));
+            currencyNames.forEach(currency => list.appendChild(genElem(currency)));
         }
 
         /*
          * Make the buttons checked
          */
         document.getElementById("reinitialise").click();
-
-        /**
-         * Restarts the graph with
-         * the chosen currencies
-         */
-        function restartGraph(currencies, exchanges) {
-            const graphElement = document.getElementById("graph");
-            graphElement.removeChild(graphElement.getElementsByTagName("g")[0]);
-            var g = new Graph(currencies, exchanges);
-            g.showGraph();
-        }
 
         /**
          * Set on click listeners for the
@@ -88,7 +77,7 @@ class InteractiveGraph {
                 [].forEach.call(eles, function (el) {
                     el.style.backgroundColor = SELECT_COLOR;
                 });
-                restartGraph(completeCurrencies, exchanges)
+                graph.restartGraph(currencies, exchanges)
             });
 
             //Cleans all nodes and marks all nodes as unselected
@@ -98,7 +87,8 @@ class InteractiveGraph {
                 [].forEach.call(eles, function (el) {
                     el.style.backgroundColor = DESELECT_COLOR;
                 });
-                restartGraph([], [])
+
+                graph.restartGraph([], []);
             });
 
             //Keeps the text color of the button to white

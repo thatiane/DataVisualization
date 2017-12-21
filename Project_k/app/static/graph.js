@@ -2,15 +2,13 @@
 class Graph {
 
     constructor(currencies, exchanges) {
+        this._init(currencies, exchanges);
 
-        this.priceChart = new DataChart("currencies-chart",
-            { mode: "horizontalBar" }
-        );
+        this.priceChart = new DataChart("currencies-chart", {mode: "horizontalBar"});
+        this.linkChart = new DataChart("exchanges-chart", { mode: "bar" });
+    }
 
-        this.linkChart = new DataChart("exchanges-chart",
-            { mode: "bar" }
-        );
-
+    _init(currencies, exchanges) {
         this.currencies = currencies;
         this.currencies = _.sortBy(this.currencies, 'price-usd');
         this.displayedCurrencies = currencies;
@@ -20,7 +18,6 @@ class Graph {
         this.mergedExchanges = merged_exchanges;
         this.displayedLinks = merged_exchanges;
     }
-
 
     showGraph() {
 
@@ -188,12 +185,21 @@ class Graph {
                     price: reducedGroup.price
                 });
         }
-
         merged_exchanges = _.sortBy(merged_exchanges, ['source', 'target']);
         return merged_exchanges;
     }
 
-    _createSVG() {
+    /**
+     * Restarts the graph with
+     * the chosen currencies
+     */
+    restartGraph(currencies, exchanges) {
+        const graphElement = document.getElementById("graph");
+        graphElement.removeChild(graphElement.getElementsByTagName("g")[0]);
 
+        this.priceChart.resetChart();
+        this.linkChart.resetChart();
+        this._init(currencies, exchanges);
+        this.showGraph();
     }
 }
