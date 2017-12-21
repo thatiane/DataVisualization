@@ -28,10 +28,10 @@ class Graph {
                 .call(d3.zoom().on("zoom", function () { svg.attr("transform", d3.event.transform)}))
                 .append("g"), width = +x, height = +y;
 
-        //var color = d3.scaleOrdinal(d3.schemeCategory20);
+        var color = d3.scaleOrdinal(d3.schemeCategory20);
 
         var simulation = d3.forceSimulation()
-            .force("link", d3.forceLink().id(function (d) {return d.id;}).distance(y / 2.4).strength(0.12))
+            .force("link", d3.forceLink().id(function (d) {return d.id;}).distance(y / 2.5).strength(0.1))
             .force("collide", d3.forceCollide().radius(15))
             .force("charge", d3.forceManyBody())
             .force("center", d3.forceCenter(width / 2, height / 2));
@@ -113,11 +113,6 @@ class Graph {
             d.fy = null;
         }
 
-    }
-
-    cleanGraph() {
-        const graphElement = document.getElementById("graph");
-        graphElement.removeChild(graphElement.getElementsByTagName("g")[0]);
     }
 
     _createExchanges(currencies, exchanges) {

@@ -8,40 +8,27 @@ class InteractiveGraph {
     constructor(currencies, exchanges) {
         this.currencies = currencies;
         this.exchanges = exchanges;
-        this.graph = new Graph(currencies, exchanges);
-        this.graph.showGraph();
 
-        //Generate the expandable list
-        this._generateExpandableList(currencies.map(c=>c['name']), exchanges, "make-network", false);
-        this._generateExpandableList(currencies.map(c=>c['name']), exchanges, "modify-network", true);
+        //Initialize graph
+        var graph = new Graph(currencies, exchanges);
+        graph.showGraph();
+
+        this._init(currencies.map(c=>c['name']), exchanges, false);
     }
 
-    _generateExpandableList(currencies, exchanges, id, modify) {
-        const reinitialize = document.getElementById("reinitialise");
-        var g = this.graph;
-        var curr = this.currencies;
-        reinitialize.addEventListener("click", function() {
-            g.cleanGraph();
-            g = new Graph(curr, exchanges);
-            g.showGraph();
-        });
+    _init(currencies, exchanges, id) {
+        var completeCurrencies = this.currencies;
 
-        this.graph = g;
+        setOnClickListeners();
 
-        const button = document.getElementById(id)
+        const button = document.getElementById("modify-network");
         const list = document.getElementById(button.getAttribute("href").substr(1));
-
         const genElem = function(label)  {
             var domElement = document.createElement("div");
             var text = document.createTextNode(label);
             domElement.appendChild(text);
             domElement.setAttribute("class", "coin-name");
             domElement.setAttribute("data-value", label);
-            if(modify) {
-                if(g.currencies.map(x=>x.name).indexOf(label) != -1) {
-                    domElement.setAttribute("style", "background-color: " + SELECT_COLOR);
-                }
-            }
 
             //Add on click listener
             domElement.addEventListener("click", function() {
@@ -52,6 +39,12 @@ class InteractiveGraph {
                 } else if (computedStyle['background-color'] === SELECT_COLOR) {
                     domElement.style.backgroundColor = DESELECT_COLOR;
                 }
+
+                var eles = document.getElementsByClassName("coin-name");
+                var chosenCurrencies = [].filter.call(eles, function(x) {return x.style.backgroundColor == SELECT_COLOR});
+                var chosenNodes = completeCurrencies.filter(x => [].map.call(chosenCurrencies, function(el) {return el.dataset.value}).indexOf(x['name']) != -1);
+
+                restartGraph(chosenNodes, exchanges);
             });
 
             return domElement;
@@ -59,57 +52,39 @@ class InteractiveGraph {
 
         currencies.forEach(currency => list.appendChild(genElem(currency)));
 
-        //Add Done and Cancel buttons
-        this._generateCancelButton(list, button);
-        this._generateDoneButton(list, button, modify);
-    }
+        //Make the buttons checked
+        document.getElementById("reinitialise").click();
 
-    _generateCancelButton(list, button) {
-
-         //Add cancel button at the end of the list
-        var domElement = document.createElement("div");
-        var text = document.createTextNode(CANCEL_TEXT);
-        domElement.appendChild(text);
-        domElement.setAttribute("class", "btn btn-info");
-        domElement.addEventListener("click", cancel);
-
-        function cancel() {
-            const eles = document.getElementsByClassName("coin-name");
-            [].forEach.call(eles, function (el) {el.style.backgroundColor = DESELECT_COLOR;});
-            button.click();
+        function restartGraph(currencies, exchanges) {
+            const graphElement = document.getElementById("graph");
+            graphElement.removeChild(graphElement.getElementsByTagName("g")[0]);
+            var g = new Graph(currencies, exchanges);
+            g.showGraph();
         }
 
-        list.appendChild(domElement);
-    }
+        function setOnClickListeners() {
+            const reinitialize = document.getElementById("reinitialise");
+            reinitialize.addEventListener("click", function() {
+                var eles = document.getElementsByClassName("coin-name");
+                [].forEach.call(eles, function (el) {
+                    el.style.backgroundColor = SELECT_COLOR;
+                });
+                restartGraph(completeCurrencies, exchanges)
+            });
 
-    _generateDoneButton(list, button, modify) {
-        //Add done button at the end of the list
-        var domElement = document.createElement("div");
-        var text = document.createTextNode(DONE_TEXT);
-        domElement.appendChild(text);
-        domElement.setAttribute("class", "btn btn-info");
-        domElement.addEventListener("click", done);
+            const clean = document.getElementById("clean");
+            clean.addEventListener("click", function() {
+                var eles = document.getElementsByClassName("coin-name");
+                [].forEach.call(eles, function (el) {
+                    el.style.backgroundColor = DESELECT_COLOR;
+                });
+                restartGraph([], [])
+            });
 
-        var currencies = this.currencies;
-        var exchanges = this.exchanges;
-        var newGraph = this.graph;
-
-        function done() {
-            var eles = document.getElementsByClassName("coin-name");
-            var chosenCurrencies = [].filter.call(eles, function(x) {return x.style.backgroundColor == SELECT_COLOR});
-            var chosenNodes = currencies.filter(x => [].map.call(chosenCurrencies, function(el) {return el.dataset.value}).indexOf(x['name']) != -1);
-            if(!modify) {
-                [].forEach.call(eles, function (el) {el.style.backgroundColor = DESELECT_COLOR;});
-            }
-
-            newGraph.cleanGraph();
-            newGraph = new Graph(chosenNodes, exchanges);
-            newGraph.showGraph();
-
-            button.click();
+            const modify = document.getElementById("modify-network");
+            modify.addEventListener("click", function() {
+               this.style.color = "rgb(255, 255, 255)";
+            });
         }
-
-        this.graph = newGraph;
-        list.appendChild(domElement);
     }
 }
