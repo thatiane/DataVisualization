@@ -61,7 +61,7 @@ class Graph {
 
         node.append("title")
             .text(function (d) {
-                return d.id;
+                return d.name + " " + d['price-usd'] + "$";
             });
 
         simulation
@@ -70,10 +70,6 @@ class Graph {
 
         simulation.force("link")
             .links(this.displayedLinks);
-
-        this.d3Nodes = node;
-        this.d3Links = link;
-        this.simulation = simulation;
 
         function ticked() {
             link
@@ -119,96 +115,9 @@ class Graph {
 
     }
 
-    removeNode(id) {
-        this.displayedCurrencies = _.filter(this.displayedCurrencies, (currency) => {
-            return currency.id !== id;
-        });
-
-        this.displayedLinks = _.filter(this.displayedLinks, (exchangePair) => {
-            return (exchangePair.target.id !== id) && (exchangePair.source.id !== id);
-        });
-
-        this._updateSimulation(this.displayedCurrencies, this.displayedLinks);
-        this._updateD3Nodes(this.d3Nodes, this.displayedCurrencies, false);
-        this._updateD3Links(this.d3Links, this.displayedLinks, false);
-    }
-
-    addNode(id) {
-        this.displayedCurrencies = this.displayedCurrencies.concat(_.find(this.currencies, (currency) => {
-            return currency.id === id;
-        }));
-
-        this.displayedCurrencies = _.sortBy(this.displayedCurrencies, 'price-usd');
-
-        this.displayedLinks = this.displayedLinks.concat(_.filter(this.mergedExchanges, (exchangePair) => {
-            return (exchangePair.source === id) || (exchangePair.target === id);
-        }));
-
-        this.displayedLinks = _.sortBy(this.displayedLinks, ['source', 'target']);
-
-        this._updateSimulation(this.displayedCurrencies, this.displayedLinks);
-
-        this._updateD3Nodes(this.d3Nodes, this.displayedCurrencies, true);
-        this._updateD3Links(this.d3Links, this.displayedLinks, true);
-    }
-
-    _updateSimulation(nodes, links) {
-         this.simulation
-            .nodes(nodes)
-
-        this.simulation.force("link")
-            .links(links);
-    }
-
-    _updateD3Links(d3Links, displayedLinks, add) {
-        d3Links = d3Links.data(displayedLinks);
-
-        if (add) {
-            d3Links = d3Links.enter().append("line")
-                .attr("stroke-width", function (d) {
-                    return 3 * Math.log(d['volume24h']);
-                })
-                .merge(d3Links);
-        } else {
-            d3Links = d3Links.exit().remove();
-        }
-    }
-
-    _updateD3Nodes(d3Nodes, displayedNodes, add) {
-        console.log('here ' + JSON.stringify(displayedNodes));
-        d3Nodes = d3Nodes.data(displayedNodes);
-
-        if (add) {
-            d3Nodes.enter().append("circle")
-                .attr("r", function (d) {
-                    return 10 * Math.log(d['volume-usd']);
-                })
-                .attr("fill", 'black')
-                .call(d3.drag()
-                    .on("start", dragstarted)
-                    .on("drag", dragged)
-                    .on("end", dragended))
-                .merge(d3Nodes);
-        } else {
-            d3Nodes.exit().remove();
-        }
-
-        function dragstarted(d) {
-            if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-            d.fx = d.x;
-            d.fy = d.y;
-        }
-
-        function dragged(d) {
-            d.fx = d3.event.x;
-            d.fy = d3.event.y;
-        }
-
-        function dragended(d) {
-            if (!d3.event.active) simulation.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
-        }
+    cleanGraph() {
+        const graphElement = document.getElementById("graph");
+        graphElement.removeChild(graphElement.getElementsByTagName("g")[0]);
     }
 
     _createExchanges(currencies, exchanges) {
