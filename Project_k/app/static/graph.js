@@ -48,7 +48,7 @@ class Graph {
 
         link.append("title")
             .text(function (d) {
-                return "Exchange between: " + d.source + " and " + d.target + "with exchange volume=" + d.volume24h;
+                return "Exchange between: " + d.source + " and " + d.target + " with volume=" + d.volume24h;
             });
 
 
