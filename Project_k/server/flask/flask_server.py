@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, render_template_string
 from flask_assets import Bundle, Environment
 from multiprocessing import Process
 from scraping.currencies_fetcher import CurrenciesFetcher
@@ -26,6 +26,13 @@ def index():
 def data():
     return volumes_fetchers.get_json_data()
 
+@app.route('/processbook')
+def process_book():
+    return render_template_string("In progress")
+
+@app.route('/demo')
+def demo():
+    return render_template_string("In progress")
 
 if __name__ == '__main__':
     scraper_process = Process(target=volumes_fetchers.scrap_data_repeatedly)

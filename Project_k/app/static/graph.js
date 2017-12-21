@@ -10,7 +10,6 @@ class Graph {
 
         this.mergedExchanges = merged_exchanges;
         this.displayedLinks = merged_exchanges;
-
     }
 
 
@@ -35,7 +34,7 @@ class Graph {
             .force("link", d3.forceLink().id(function (d) {return d.id;}).distance(y / 2.4).strength(0.12))
             .force("collide", d3.forceCollide().radius(15))
             .force("charge", d3.forceManyBody())
-            .force("center", d3.forceCenter(width / 2.5, height / 2));
+            .force("center", d3.forceCenter(width / 2, height / 2));
 
         var link = svg.append("g")
             .attr("class", "links")

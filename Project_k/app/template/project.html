@@ -22,19 +22,24 @@
         </div>
         <ul class="nav navbar-nav">
           <li><a href="/">Visualisation</a></li>
-          <li><a href="#">Process Book</a></li>
+          <li><a href="/demo">Demo</a></li>
+          <li><a href="/processbook">Process Book</a></li>
         </ul>
       </div>
     </nav>
 
       <div class="row">
+            <div id="ui" class="col-sm-2">
+                  <a href="#list" class="btn w-100" data-toggle="collapse">Customize network</a>
+                    <div id="list" class="collapse">
+                </div>
+            </div>
             <svg id="graph" class="col-sm-10"></svg>
-            <div id="ui" class="col-sm-2"></div>
       </div>
 
       {% assets "javascript_js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-        <script src="../static/scrollbox.js"></script>
+        <script src="../static/customize.js"></script>
         <script src="../static/graph.js"></script>
         <script src="../static/utils.js"></script>
       {% endassets %}

@@ -16,6 +16,8 @@ promise.then((data) => {
     const graph = new Graph(currencies, volumes);
     graph.showGraph();
 
+    const customize = new CustomNetwork(currencies, volumes);
+
     //Show UI
    // scrollBox(currencies.map(x=>[x['id'],x['name']]), graph)
 });
