@@ -4,6 +4,8 @@
         <meta charset="utf-8">
         <script src="https://d3js.org/d3.v4.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.4/lodash.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
 
         <!-- Latest compiled and minified CSS -->
@@ -37,8 +39,12 @@
 
                 <a id="modify-network" href="#modify-list" class="btn w-100" data-toggle="collapse">Modify current network</a>
                 <div id="modify-list" class="collapse"></div>
+                <div style="position:relative"> <canvas id="currencies-chart"> </canvas></div>
             </div>
-            <svg id="graph" class="col-sm-10"></svg>
+            <div class="col-sm-10">
+                <svg id="graph"></svg>
+                <div style="position:relative; width: 100%"> <canvas id="exchanges-chart"> </canvas></div>
+            </div>
       </div>
 
       {% assets "javascript_js" %}
@@ -46,6 +52,7 @@
         <script src="../static/customize.js"></script>
         <script src="../static/graph.js"></script>
         <script src="../static/utils.js"></script>
+        <script src="../static/chart.js"></script>
       {% endassets %}
 
         <!-- jQuery library -->

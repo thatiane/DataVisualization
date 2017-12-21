@@ -77,7 +77,16 @@ html, body {
     background:rgba(0,0,0,0.05);
 }
 
-.row {
-    height: 90vh;
+#ui, currencies-chart {
+    height: 95vh;
     overflow: hidden;
+}
+.row {
+    overflow: hidden;
+    height: 95vh;
+}
+
+#graph {
+    width: 100%;
+    height: 70vh;
 }

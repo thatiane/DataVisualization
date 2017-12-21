@@ -1,7 +1,5 @@
 const SELECT_COLOR = 'rgb(0, 128, 0)';
 const DESELECT_COLOR = 'rgb(255, 255, 0)';
-const DONE_TEXT = "Done";
-const CANCEL_TEXT = "Cancel";
 
 class InteractiveGraph {
 

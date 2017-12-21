@@ -1,6 +1,15 @@
+
 class Graph {
 
     constructor(currencies, exchanges) {
+
+        this.priceChart = new DataChart("currencies-chart",
+            { mode: "horizontalBar" }
+        );
+
+        this.linkChart = new DataChart("exchanges-chart",
+            { mode: "bar" }
+        );
 
         this.currencies = currencies;
         this.currencies = _.sortBy(this.currencies, 'price-usd');
@@ -36,6 +45,7 @@ class Graph {
             .force("charge", d3.forceManyBody())
             .force("center", d3.forceCenter(width / 2, height / 2));
 
+        var exchangesChart = this.linkChart;
         var link = svg.append("g")
             .attr("class", "links")
             .selectAll("line")
@@ -44,7 +54,8 @@ class Graph {
                 return 0.15 * Math.log(d['volume24h']);
             }).on("click", function(d){
               console.log(d);
-            });;
+              exchangesChart.addDataset(d['source']['id'] + "-" + d['target']['id'], Math.log(d['volume24h'])+10);
+            });
 
         link.append("title")
             .text(function (d) {
@@ -52,6 +63,7 @@ class Graph {
             });
 
 
+        var chart = this.priceChart;
         var node = svg.append("g")
             .attr("class", "nodes")
             .selectAll("circle")
@@ -66,6 +78,7 @@ class Graph {
                 .on("end", dragended))
             .on("click", function(d){
               console.log(d);
+              chart.addDataset(d['name'], Math.log(d['price-usd'])+10);
             });
 
 
