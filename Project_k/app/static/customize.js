@@ -20,7 +20,7 @@ class InteractiveGraph {
         var completeCurrencies = this.currencies;
 
         setOnClickListeners();
-        setExpandableList(); 
+        setExpandableList();
 
         function setExpandableList() {
             const button = document.getElementById("modify-network");

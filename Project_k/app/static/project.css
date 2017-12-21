@@ -10,9 +10,17 @@ html, body {
   stroke-opacity: 0.6;
 }
 
+.links:hover{
+    cursor: pointer;
+}
+
 .nodes circle {
   stroke: #fff;
   stroke-width: 1.5px;
+}
+
+.nodes:hover {
+    cursor: pointer;
 }
 
 .w-100 {

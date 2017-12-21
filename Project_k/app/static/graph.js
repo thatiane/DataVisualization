@@ -42,6 +42,13 @@ class Graph {
             .data(this.displayedLinks).enter().append("line")
             .attr("stroke-width", function (d) {
                 return 0.15 * Math.log(d['volume24h']);
+            }).on("click", function(d){
+              console.log(d);
+            });;
+
+        link.append("title")
+            .text(function (d) {
+                return "Coins: " + d.source + d.target + " exchange volume=" + d.volume24h;
             });
 
 
@@ -56,7 +63,10 @@ class Graph {
             .call(d3.drag()
                 .on("start", dragstarted)
                 .on("drag", dragged)
-                .on("end", dragended));
+                .on("end", dragended))
+            .on("click", function(d){
+              console.log(d);
+            });
 
 
         node.append("title")
