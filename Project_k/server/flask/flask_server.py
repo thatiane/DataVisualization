@@ -31,7 +31,7 @@ def data():
 @app.route('/processbook')
 def process_book():
     """Route handler. Send process book to client"""
-    return render_template_string("In progress")
+    return render_template('process_book.html')
 
 @app.route('/demo')
 def demo():
