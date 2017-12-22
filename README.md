@@ -1,15 +1,15 @@
 ## /!\ Please read /!\
 
-##Visualisation 
+### Visualisation 
 
 Please click on the link below to get to our visualization:
 
 http://cryptocurrency.gucevska.io
 
-## Process book 
+### Process book 
 http://cryptocurrency.gucevska.io/processbook
 
-## Screencast
+### Screencast
 http://cryptocurrency.gucevska.io/demo
 
 ### Server setup
@@ -30,3 +30,5 @@ $ python3 flask_server.py
 ```
 
 You will then be able to connect to the server on http://0.0.0.0:5000/ by default.
+
+
