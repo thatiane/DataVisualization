@@ -10,6 +10,7 @@ class InteractiveGraph {
         //Initialize graph
         this.graph = new Graph(currencies, exchanges);
         this.graph.showGraph();
+        this.graph.addAllToCharts();
 
         this._init(this.currencies, this.exchanges, this.graph);
     }
@@ -61,7 +62,11 @@ class InteractiveGraph {
         /*
          * Make the buttons checked
          */
-        document.getElementById("reinitialise").click();
+        //document.getElementById("reinitialise").click();
+        var eles = document.getElementsByClassName("coin-name");
+        [].forEach.call(eles, function (el) {
+            el.style.backgroundColor = SELECT_COLOR;
+        });
 
         /**
          * Set on click listeners for the

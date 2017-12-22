@@ -220,4 +220,23 @@ class Graph {
         this._init(currencies, exchanges);
         this.showGraph();
     }
+
+    addAllToCharts() {
+        var nodeChart = this.priceChart;
+        this.displayedCurrencies.slice(0,20).forEach(x=>nodeChart.addDataset(x['name'], Math.log(x['price-usd'])+10));
+        var linkChart = this.linkChart;
+        this.displayedLinks.slice(0,30).forEach(d => linkChart.addDataset(d['source']['id'] + "-" + d['target']['id'], Math.log(d['volume24h'])+10));
+
+        var pieChart = this.pieChart;
+        var d = this.displayedLinks[0];
+        var markets = this.grouped_exchanges[d['source']['id']+","+d['target']['id']];
+              var labels = [];
+              var values = [];
+              markets.forEach(function (m) {
+                  labels.push(m['source']);
+                  values.push(m['volume24h']);
+              });
+
+              pieChart.createChart(values, labels);
+    }
 }

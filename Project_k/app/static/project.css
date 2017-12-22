@@ -59,14 +59,14 @@ html, body {
     left: 300px;
     bottom: 0;
     height: 200px;
-    max-width: 80vw;
+    max-width: 70vw;
 }
 
 #container-nodes-histo {
     position: fixed;
     right: 0;
     width: 400px;
-    max-height: 70vh;
+    max-height: 65vh;
     bottom: 200px;
     top: 70px;
     overflow-y: auto;
@@ -96,7 +96,7 @@ html, body {
     position: fixed;
     right: 0;
     bottom: 0;
-    width: 400px !important;
+    width: 200px !important;
     height: auto !important;
 }
 

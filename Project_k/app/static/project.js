@@ -10,4 +10,10 @@ promise.then((data) => {
     volumes = parseVolumes(data[1]);
 
     const customize = new InteractiveGraph(currencies, volumes);
+
+    var tour = introJs()
+    tour.setOption('tooltipPosition', 'auto');
+	tour.setOption('positionPrecedence', ['left', 'right', 'top', 'bottom']);
+	tour.setOption("skipLabel", "Exit");
+    tour.start();
 });
