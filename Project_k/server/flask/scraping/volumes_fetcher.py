@@ -7,6 +7,12 @@ from helper.timer import set_interval
 class VolumesFetcher:
 
     def __init__(self, currencies_fetcher, refresh_rate):
+        """ Class constructor for VolumesFetcher
+
+        Keyword arguments:
+        currencies_fetcher -- the currency fetcher to use
+        refresh_rate -- determine the frequency at which the fetching happens
+        """
         manager = Manager()
         self.pairs_volume = manager.list()
         self.currencies = manager.list()
@@ -14,6 +20,7 @@ class VolumesFetcher:
         self.refresh_rate = refresh_rate
 
     def scrap_data_once(self):
+        """Fetch exchanges information"""
         currencies = self.currencies_fetcher.scrap_data()
 
         pairs_volume = []
@@ -28,16 +35,20 @@ class VolumesFetcher:
         print('Volume scraping complete')
 
     def scrap_data_repeatedly(self):
+        """Fetch exchanges information repeatedly"""
         self.scrap_data_once()
         set_interval(self.scrap_data_once, self.refresh_rate)
 
     def get_json_data(self):
+        """Get the currencies and exchanges information in JSON format"""
         return jsonify([self.get_currencies(), self.get_volumes()])
 
     def get_volumes(self):
+        """Get the exchanges information"""
         return self.pairs_volume.__str__()
 
     def get_currencies(self):
+        """Get the currencies information"""
         return self.currencies.__str__()
 
     def __string_to_number(self, string):

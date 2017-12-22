@@ -10,6 +10,7 @@ class CurrenciesFetcher:
         self.currencies = []
 
     def scrap_data(self):
+        """Fetch a list of currencies with many infos"""
         page = requests.get(CURRENCIES_DATA_URL)
         s = bs4.BeautifulSoup(page.text, 'html.parser')
 
@@ -42,6 +43,7 @@ class CurrenciesFetcher:
         return self.currencies
 
     def get_currencies(self):
+        """Return a list of currencies"""
         return jsonify(self.currencies.__str__())
 
     def __extract_value(self, bs4_htmls, element_index, attribute_name):
