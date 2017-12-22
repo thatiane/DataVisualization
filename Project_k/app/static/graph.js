@@ -48,7 +48,7 @@ class Graph {
             .force("yAxis", d3.forceY(y))
             .force("xAxis", d3.forceX(x))
             .force("charge", d3.forceManyBody().strength(0.01))
-            .force("center", d3.forceCenter(width / 2 - 200, height /2 - 200));
+            .force("center", d3.forceCenter(width / 2+150, height /2 - 150));
 
         var grouped = this.grouped_exchanges;
         var exchangesChart = this.linkChart;
@@ -229,9 +229,9 @@ class Graph {
 
     addAllToCharts() {
         var nodeChart = this.priceChart;
-        this.displayedCurrencies.slice(0,20).forEach(x=>nodeChart.addDataset(x['name'], Math.log(x['price-usd'])+10));
+        this.displayedCurrencies.slice(0,10).forEach(x=>nodeChart.addDataset(x['name'], Math.log(x['price-usd'])+10));
         var linkChart = this.linkChart;
-        this.displayedLinks.slice(0,30).forEach(d => linkChart.addDataset(d['source']['id'] + "-" + d['target']['id'], Math.log(d['volume24h'])+10));
+        this.displayedLinks.slice(0,10).forEach(d => linkChart.addDataset(d['source']['id'] + "-" + d['target']['id'], Math.log(d['volume24h'])+10));
 
         var pieChart = this.pieChart;
         var d = this.displayedLinks[0];

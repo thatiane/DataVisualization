@@ -79,7 +79,7 @@ class DataChart {
             borderWidth: 2,
           }
         },
-        responsive: false,
+        responsive: true,
         maintainAspectRatio: false,
         legend: {
           display: false
@@ -94,7 +94,7 @@ class DataChart {
                         label = 'yLabel';
                     }
                     var res = Math.exp(tooltipItem[label] - 10);
-                    return res + "";
+                    return Math.round(res *100)/100 + "";
                 },
 
                 title: function(a, data) {
@@ -110,10 +110,10 @@ class DataChart {
           : "width";
 
     if(this.mode === "horizontalBar") {
-        this.chart.canvas.parentNode.style["width"] = '300px';
+        this.chart.canvas.parentNode.style["width"] = '150px';
 
     } else {
-        this.chart.canvas.parentNode.style["height"] = '300px';
+        this.chart.canvas.parentNode.style["height"] = '150px';
     }
 
         this.hasChart = true;
