@@ -127,7 +127,3 @@ html, body {
 ::-webkit-scrollbar-thumb:hover {
     background:rgba(0,0,0,0.4);
 }
-
-::-webkit-scrollbar-thumb:window-inactive {
-    background:rgba(0,0,0,0.05);
-}
