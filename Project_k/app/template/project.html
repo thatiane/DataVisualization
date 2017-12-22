@@ -2,32 +2,88 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <script src="https://d3js.org/d3.v3.js"></script>
-        <script src="https://d3js.org/d3.v4.0.0-alpha.40.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.2.6/cytoscape.min.js"></script>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-        <link href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css" rel="stylesheet" type="text/css">
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.js"></script>
-        <script src="https://cdn.rawgit.com/cytoscape/cytoscape.js-qtip/2.7.0/cytoscape-qtip.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.7.0/introjs.min.css">
 
         <title>Crypto Currencies</title>
-        <link rel="stylesheet" href="../static/project.css"/>
-        <link rel="stylesheet" href="../static/slidebar/slidebar.css"/>
-        <link rel="stylesheet" href="../static/scrollbox/scrollbox.css"/>
-        <link rel="stylesheet" href="../static/buttons/button.css"/>
+        <link rel="stylesheet" href="../static/project.css" />
+
+        <script>
+                function intro() {
+                    var tour = introJs();
+                    tour.setOption('tooltipPosition', 'auto');
+                    tour.setOption('positionPrecedence', ['left', 'right', 'top', 'bottom']);
+                    tour.setOption("skipLabel", "Exit");
+                    tour.start();
+                }
+        </script>
     </head>
 
-    <body>
+    <body class="container-fluid"  style="padding:0" >
+
+    <nav class="navbar navbar-default" data-step="1" data-intro="Welcome to the crypto currency visualizer!">
+      <div class="container-fluid"  style="padding:0">
+        <div class="navbar-header" style="margin:0">
+          <a class="navbar-brand" href="#"></a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li><a href="/">Visualisation</a></li>
+          <li><a href="/demo">Demo</a></li>
+          <li><a href="/processbook">Process Book</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <svg id="graph" data-step="2" data-intro="This graph shows the transactions between different coins. You can zoom with double click,
+    drag the nodes and the graph around. By moving one node, the other nodes will regroup in a way that nodes that behave the same way
+    stay together."></svg>
+
+    <div id="ui" data-step="6" data-intro="Here you can create your own network of nodes and explore it. Enjoy!">
+        <a class="btn" href="javascript:void(0);" onclick="javascript:intro();">Tour this website</a>
+        <div>
+            <a id="clean" class="col-md-6 btn">Clean</a>
+            <a id="reinitialise" class="col-md-6 btn">Restart</a>
+        </div>
+
+        <a id="modify-network" href="#modify-list" class="btn" data-toggle="collapse">Customize network</a>
+        <div id="modify-list" class="collapse"></div>
+    </div>
+
+        <div id="container-pie"  data-step="5" data-intro="Exchanges between coins can happen on different markets!
+        This doughnut shows where happened the exchanges between the connected coins. Drag the mouse over the different fractions to learn more!">
+            <canvas id="pie-chart" width="250" height="250"></canvas>
+        </div>
+
+        <div id="container-nodes-histo"  data-step="3" data-intro="This histogram can be populated by single click on the nodes of the graph.
+        It represents the volume of the chosen coin in USD."><canvas id="nodes-histo"></canvas></div>
+
+        <div id="container-links-histo" data-step="4" data-intro="This histogram can be populated by single click on the edges of the graph.
+        It represents the volume of exchange in the last 24h between the two coins."><canvas id="links-histo"></canvas></div>
+    </div>
+
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.4/lodash.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
+      <!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.7.0/intro.min.js"></script>
+
       {% assets "javascript_js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-        <script src="../static/slidebar/slidebar.js"></script>
-        <script src="../static/buttons/button.js"></script>
-        <script src="../static/scrollbox/scrollbox.js"></script>
+        <script src="../static/customize.js"></script>
         <script src="../static/graph.js"></script>
         <script src="../static/utils.js"></script>
+        <script src="../static/chart.js"></script>
+        <script src="../static/pieChart.js"></script>
       {% endassets %}
-
-      <div id="graph"></div>
 
     </body>
 </html>

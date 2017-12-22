@@ -1,321 +1,247 @@
+
 class Graph {
 
     constructor(currencies, exchanges) {
-        this.currencies = {};
-        this.exchanges = {};
+        this._init(currencies, exchanges);
 
-        for (let i = 0; i < currencies.length; i++) {
-            var node = currencies[i];
-            node['visible'] = false;
-            this.currencies[node['id']] = node
-        }
-        var node_ids = Object.keys(this.currencies);
-
-        for (let i = 0; i < exchanges.length; i++) {
-            var coin_exchanges = exchanges[i];
-
-            for (let j = 0; j < coin_exchanges.length; j++) {
-                var ex = exchanges[i][j];
-                var pair = ex['pair'].split("/");
-                ex['visible'] = false;
-
-                if (node_ids.includes(pair[0]) && node_ids.includes(pair[1])) {
-                    this.exchanges[ex['pair'] + ex['source']] = ex
-                }
-            }
-        }
-
-        this.exchanges_total = {};
-
-
-        var count = 0;
-        for (var i = 0; i < node_ids.length - 1; i++) {
-            var n1 = node_ids[i];
-            for (var j = i + 1; j < node_ids.length; j++) {
-                var n2 = node_ids[j];
-                for (var key in this.exchanges) {
-                    if (key.indexOf(n1) != -1 && key.indexOf(n2) != -1) {
-                        var pair = n1 + '/' + n2;
-                        var volume = parseFloat(this.exchanges[key]['volume24h']);
-                        var existingVolume = 0;
-                        if (typeof this.exchanges_total[pair] != "undefined") {
-                            existingVolume = this.exchanges_total[pair]['volume'];
-                        } else {
-                            count = count + 1;
-                            this.exchanges_total[pair] = {};
-                        }
-
-                        this.exchanges_total[pair]['volume'] = volume + existingVolume;
-                    }
-                }
-            }
-        }
-
+        this.priceChart = new DataChart("nodes-histo", {mode: "horizontalBar"});
+        this.linkChart = new DataChart("links-histo", { mode: "bar" });
+        this.pieChart = new PieChart("pie-chart");
 
     }
 
+    _init(currencies, exchanges) {
+        this.currencies = currencies;
+        this.currencies = _.sortBy(this.currencies, 'price-usd');
+        this.displayedCurrencies = currencies;
+
+        var refined_exchanges = this._createExchanges(currencies, exchanges);
+
+
+        var merged_exchanges = refined_exchanges[0];
+        this.mergedExchanges = merged_exchanges;
+        this.displayedLinks = merged_exchanges;
+
+        this.grouped_exchanges = refined_exchanges[1];
+    }
 
     showGraph() {
-        var div = document.getElementById("graph");
-        var acc_width = document.getElementsByClassName("accordion")[0].offsetWidth
-        div.style.width = "100%";
-        div.style.height = "100%";
-        div.style.left = "0";
-        div.style.top = "0";
-        div.style.position = "fixed";
-        div.style.zIndex = "-1";
-        div.style.background = "#000";
-        div.style.alignContent="center";
+        var w = window,
+            d = document,
+            e = d.documentElement,
+            g = d.getElementById('graph'),
+            x = (g.clientWidth),
+            y = (w.innerHeight || e.clientHeight || g.clientHeight);
 
-        var curr = this.currencies;
+        var svg = d3.select("#graph")
+                .attr("width", x)
+                .attr("height", y)
+                .call(d3.zoom().on("zoom", function () { svg.attr("transform", d3.event.transform)}))
+                .append("g"), width = +x, height = +y;
 
+        var color = d3.scaleOrdinal(d3.schemeCategory20);
 
-        cy = window.cy = cytoscape({
-            container: div,
+        var simulation = d3.forceSimulation()
+            .force("link", d3.forceLink().id(function (d) {return d.id;}).distance(y/2).strength(0.2))
+            .force("collide", d3.forceCollide().radius(7))
+            .force("yAxis", d3.forceY(y))
+            .force("xAxis", d3.forceX(x))
+            .force("charge", d3.forceManyBody().strength(0.01))
+            .force("center", d3.forceCenter(width / 2, height /2));
 
-            layout: {
-               name: 'concentric',
-                concentric: function( node ){
-                    return node.degree();
-                },
-                levelWidth: function( nodes ){
-                    return 3;
-                }
-            },
+        var grouped = this.grouped_exchanges;
+        var exchangesChart = this.linkChart;
+        var pchart = this.pieChart;
 
-            style: cytoscape.stylesheet()
-                .selector('node')
-                .style({
-                    'shape': 'ellipse',
-                    'width': 'data(width)',
-                    'height': 'data(width)',
-                    'content': 'data(id)',
-                    'text-valign': 'center',
-                    'font-size': 'data(strength)',
-                    'text-outline-width': 1,
-                    'text-outline-color': '#afb1b0',
-                    'background-color': '#afb1b0',
-                    'color': '#fff',
-                })
-                .selector(':selected')
-                .style({
-                    'border-width': 2,
-                    'border-color': '#525453'
-                })
-                .selector('edge')
-                .style({
-                    'curve-style': 'bezier',
-                    'opacity': 0.666,
-                    'width': 'data(strength)',
-                    'line-color': 'data(faveColor)',
+        var link = svg.append("g")
+            .attr("class", "links")
+            .selectAll("line")
+            .data(this.displayedLinks).enter().append("line")
+            .attr("stroke-width", function (d) {
+                return 0.15 * Math.log(d['volume24h']);
+            }).on("click", function(d){
+              exchangesChart.addDataset(d['source']['id'] + "-" + d['target']['id'], Math.log(d['volume24h'])+10);
+              var markets = grouped[d['source']['id']+","+d['target']['id']];
+              var labels = [];
+              var values = [];
+              _.uniqBy(markets, x=>x.source).forEach(function (m) {
+                  labels.push(m['source']);
+                  values.push(m['volume24h']);
+              });
 
-                })
-                .selector(':selected')
-                .style({
-                    'border-width': 2,
-                    'border-color': '#525453'
-                }),
-
-            elements: {
-                nodes: this._setNodes(),
-                edges: this._setEdges()
-            }
-        });
-
-        let coins = this.currencies
-
-        let obj_node = new Object();
-        cy.on('click', 'node', function (evt) {
-             let data = this._private.data
-             let key = data.id
-             let node = coins[key]
-             let value = [node["change-usd"],node["price-usd"], node["volume-usd"]]
-
-             if(key in obj_node){
-                delete obj_node[key];
-             }else{
-                 obj_node[key] = value
-             }
-             let text = "";
-             let size_node = Object.keys(obj_node).length;
-             if(size_node == 0){
-                 text = text.concat("Node")
-             }else{
-                 for (let i = 0; i < size_node; i++) {
-                     let key_obj = Object.keys(obj_node)[i]
-                     text = text.concat("<b><u>"+key_obj +"</u></b><br/> change in usd: "+obj_node[key_obj][0]+"<br/> price in usd: "+obj_node[key_obj][1]+"<br/> volume in usd: " +obj_node[key_obj][2]+"<br/> <br/>");
-                 }
-             }
-             document.getElementsByClassName("nodeText")[0].innerHTML = text
-        });
-
-
-        let obj_edge = new Object();
-        //let edg = this.exchanges;
-        let edg_tot = this.exchanges_total
-        cy.on('click', 'edge', function (evt) {
-            let source = this._private.data.source
-            let target = this._private.data.target
-            let key = source+"/"+target;
-
-            if(key in obj_edge){
-               delete obj_edge[key];
-            }else{
-                obj_edge[key] = key
-            }
-
-            let text = "";
-            let size_edge = Object.keys(obj_edge).length;
-            if(size_edge == 0){
-                text = text.concat("Source = s <br/> Target = t <br/> Volume = v");
-            }else{
-                for (let i = 0; i < size_edge; i++) {
-                    let key_obj = Object.keys(obj_edge)[i]
-                    let res = key_obj.split("/");
-                    let s = res[0]
-                    let t = res[1]
-                    let v = edg_tot[s+"/"+t].volume
-                    text = text.concat("Source = <b>" + s + "</b><br/> Target = <b>" + t + "</b><br/> Volume = " + v + "<br/> <br/>");
-                }
-            }
-            document.getElementsByClassName("edgeText")[0].innerHTML = text
-        });
-        cy.nodes().qtip({
-                content: function(){
-                    let node = coins[this._private.data['id']]
-                    let change = node["change-usd"]
-                    let name = node['name']
-                    let price = node["price-usd"]
-                    let volume = node["volume-usd"]
-                    let result = "<b>" +name + "</b> <br/> change in usd: " + change + "<br/> price in usd: " + price + "<br/> volume in usd: " + volume;
-
-                    return result
-
-                },position: {
-                    my: 'top right',
-                    at: 'bottom center'
-                },show: {
-                    event: 'mouseover'
-                },hide: {
-                    event: 'mouseout'
-                }
+              var title = d['source']['id']+"-"+d['target']['id']
+              pchart.createChart(title, values, labels);
             });
 
-        cy.edges().qtip({
-                content: {
-                    /*console.log(this._private.data);
-                    let s = this._private.data.source;
-                    let t = this._private.data.target;
-                    let v = edg_tot[s+"/"+t].volume;
-                    let result = "Source = " + s + "<br/> Target = " + t + "<br/> Volume = " + v;
-                    */
-                    text: 'I follow the mouse whilst I\'m visible. Weeeeee!',
-                    //console.log("in");
-
-                    //return result
-
-                },position: {
-                    //target: this,
-
-                    viewport: ('.egde'),
-                    adjust: {
-                        method: 'none shift',
-                        mouse: true
-                    }
-                },show: {
-                    event: 'mouseover'
-                },hide: {
-                    event: 'mouseout'
-                }/*,style: {
-                    left: "200px",
-                    top: "200px"
-                }*/
+        link.append("title")
+            .text(function (d) {
+                return "Exchange between: " + d.source + " and " + d.target + " with volume=" + d.volume24h;
             });
 
-    }
 
-    _setNodes() {
-        var result = [];
+        var chart = this.priceChart;
+        var nodes = svg.append("g")
+            .attr("class", "nodes")
+            .selectAll("circle")
+            .data(this.displayedCurrencies)
+            .enter()
 
-        for(var key in this.currencies) {
-            var node = this.currencies[key];
-            node['visible'] = true;
+        var node = nodes.append("circle")
+            .attr("class", "node")
+            .attr("r", function (d) {
+                return 0.4 * Math.log(d['volume-usd']);
+            })
+            .attr("fill", 'black')
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended))
+            .on("click", function(d){
+              chart.addDataset(d['name'], Math.log(d['price-usd'])+10);
+            });
 
-            var value = Math.abs(Math.log(parseFloat(node['volume-btc']))*10);
-            result.push({data: {id: key, width: value, strength: value/3}});
+
+        node.append("title")
+            .text(function (d) {
+                return d.name + " " + d['price-usd'] + "$";
+            });
+
+        simulation
+            .nodes(this.displayedCurrencies)
+            .on("tick", ticked);
+
+        simulation.force("link")
+            .links(this.displayedLinks);
+
+        function ticked() {
+            link
+                .attr("x1", function (d) {
+                    return d.source.x;
+                })
+                .attr("y1", function (d) {
+                    return d.source.y;
+                })
+                .attr("x2", function (d) {
+                    return d.target.x;
+                })
+                .attr("y2", function (d) {
+                    return d.target.y;
+                });
+
+            node
+                .attr("cx", function (d) {
+                    return d.x;
+                })
+                .attr("cy", function (d) {
+                    return d.y;
+                });
+        }
+        function dragstarted(d) {
+            if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
         }
 
-        return result
-    }
-
-    _setEdges() {
-        var result = [];
-        var node_ids = Object.keys(this.currencies);
-        for (var key in this.exchanges_total) {
-            var edge = this.exchanges_total[key];
-            var pair = key.split("/");
-
-            if(node_ids.includes(pair[0]) && node_ids.includes(pair[1])) {
-                edge['visible'] = true;
-                var edge_size = Math.log(edge['volume'] + 3)/Math.log(3);
-
-                result.push({data: {id: key, source: pair[0], target: pair[1], faveColor: '#6FB1FC', strength: edge_size}});
-            }
+        function dragged(d) {
+            d.fx = d3.event.x;
+            d.fy = d3.event.y;
         }
 
-        return result
+        function dragended(d) {
+            if (!d3.event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+
     }
 
-    removeNode(id) {
-        var node_to_remove;
-        var es = [];
-
-        cy.nodes().forEach(function (node) {
-            if ((node.data('id') === id)) {
-                node_to_remove = node;
-            }
+    _createExchanges(currencies, exchanges) {
+        var exchanges = [].concat.apply([], exchanges);
+        var currencies_ids = _.map(currencies, (curr) => {
+            return curr.id;
         });
 
-        cy.edges().forEach(function (edge) {
-            if ((edge.data('source') === id) || (edge.data('target') === id)) {
-              es.push(edge);
+        //Create links only for existing nodes
+        exchanges = _.filter(exchanges, (exchange) => {
+            var curr1 = exchange.pair.split('/')[0];
+            var curr2 = exchange.pair.split('/')[1];
 
-            }
+            return currencies_ids.includes(curr1) && currencies_ids.includes(curr2);
         });
 
-        if(typeof node_to_remove != "undefined") {
-            this.currencies[node_to_remove.data('id')]['node'] = node_to_remove;
-            this.currencies[node_to_remove.data('id')]['visible'] = false;
+        //Groups exchanges by source-target id
+        var exchanges_grouped = _.groupBy(exchanges, (exchange) => {
+            var pair = exchange.pair;
+            return pair.split('/').sort();
+        });
 
-            for (let i = 0; i < es.length; i++) {
-                var edge = this.exchanges_total[es[i].data('id')];
-                edge['edge'] = es[i];
-                edge['visible'] = false;
-            }
-            cy.remove("#"+id);
-        }
-    }
+        //Merges exchanges between same coins but different markets (source)
+        var merged_exchanges = [];
 
-    addNode(id) {
-        var node_to_add = this.currencies[id];
+        for (var group in exchanges_grouped) {
 
-        if(typeof node_to_add != "undefined" && !node_to_add['visible']) {
-            node_to_add['visible'] = true;
-            cy.add(node_to_add['node']);
-
-            //Add the edges
-            for(var key in this.exchanges_total) {
-                var edge = this.exchanges_total[key];
-                if(key.indexOf(id) !== -1 && !edge['visible']) {
-                    var edge_to_add = edge['edge'];
-                    var source_id = edge_to_add.data('source');
-                    var target_id = edge_to_add.data('target');
-
-                    if(this.currencies[source_id]['visible'] && this.currencies[target_id]['visible']) {
-                        cy.add(edge_to_add);
-                    }
+            /*This groups information from different markets.
+             * volume24h is the accumulated volume from the exchanges on every market
+             * price is the mean price of all exchanges between two coins
+             */
+            var reducedGroup = _.reduce(exchanges_grouped[group], function (acc, exchange) {
+                return {
+                    volume24h: acc.volume24h + exchange.volume24h,
+                    price: acc.price + exchange.price,
+                    size: acc.size + 1.0
                 }
-            }
+
+            }, {volume24h: 0.0, price: 0.0, size: 0.0});
+            reducedGroup.price = reducedGroup.price / reducedGroup.size;
+
+            var source = group.split(',')[0];
+            var target = group.split(',')[1];
+
+            merged_exchanges = merged_exchanges
+                .concat({
+                    source: source,
+                    target: target,
+                    value: 1, volume24h: reducedGroup.volume24h,
+                    price: reducedGroup.price
+                });
         }
+        merged_exchanges = _.sortBy(merged_exchanges, ['source', 'target']);
+        return [merged_exchanges, exchanges_grouped];
+    }
+
+    /**
+     * Restarts the graph with
+     * the chosen currencies
+     */
+    restartGraph(currencies, exchanges) {
+        const graphElement = document.getElementById("graph");
+        graphElement.removeChild(graphElement.getElementsByTagName("g")[0]);
+
+        this.priceChart.resetChart();
+        this.linkChart.resetChart();
+        this.pieChart.resetChart();
+
+        this._init(currencies, exchanges);
+        this.showGraph();
+    }
+
+    addAllToCharts() {
+        var nodeChart = this.priceChart;
+        this.displayedCurrencies.slice(0,10).forEach(x=>nodeChart.addDataset(x['name'], Math.log(x['price-usd'])+10));
+        var linkChart = this.linkChart;
+        this.displayedLinks.slice(0,10).forEach(d => linkChart.addDataset(d['source']['id'] + "-" + d['target']['id'], Math.log(d['volume24h'])+10));
+
+        var pieChart = this.pieChart;
+        var d = this.displayedLinks[0];
+        var markets = this.grouped_exchanges[d['source']['id']+","+d['target']['id']];
+              var labels = [];
+              var values = [];
+              _.uniqBy(markets, x=>x.source).forEach(function (m) {
+                  labels.push(m['source']);
+                  values.push(m['volume24h']);
+              });
+
+              var title = d['source']['id']+"-"+d['target']['id'];
+              pieChart.createChart(title, values, labels);
     }
 }
