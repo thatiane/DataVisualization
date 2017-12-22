@@ -35,7 +35,7 @@ def process_book():
 
 @app.route('/demo')
 def demo():
-    return render_template_string("In progress")
+    return render_template('demo.html')
 
 
 if __name__ == '__main__':

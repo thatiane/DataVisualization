@@ -97,13 +97,13 @@ class Graph {
                 .on("drag", dragged)
                 .on("end", dragended))
             .on("click", function(d){
-              chart.addDataset(d['name'], Math.log(d['price-usd'])+10);
+              chart.addDataset(d['name'], Math.log(d['volume-usd'])+10);
             });
 
 
         node.append("title")
             .text(function (d) {
-                return d.name + " " + d['price-usd'] + "$";
+                return d.name + " " + d['volume-usd'];
             });
 
         simulation
@@ -227,7 +227,7 @@ class Graph {
 
     addAllToCharts() {
         var nodeChart = this.priceChart;
-        this.displayedCurrencies.slice(0,10).forEach(x=>nodeChart.addDataset(x['name'], Math.log(x['price-usd'])+10));
+        this.displayedCurrencies.slice(0,10).forEach(x=>nodeChart.addDataset(x['name'], Math.log(x['volume-usd'])+10));
         var linkChart = this.linkChart;
         this.displayedLinks.slice(0,10).forEach(d => linkChart.addDataset(d['source']['id'] + "-" + d['target']['id'], Math.log(d['volume24h'])+10));
 
