@@ -6,6 +6,8 @@ class Graph {
 
         this.priceChart = new DataChart("currencies-chart", {mode: "horizontalBar"});
         this.linkChart = new DataChart("exchanges-chart", { mode: "bar" });
+        this.pieChart = new PieChart("markets");
+
     }
 
     _init(currencies, exchanges) {
@@ -13,10 +15,14 @@ class Graph {
         this.currencies = _.sortBy(this.currencies, 'price-usd');
         this.displayedCurrencies = currencies;
 
-        var merged_exchanges = this._createExchanges(currencies, exchanges);
+        var refined_exchanges = this._createExchanges(currencies, exchanges);
 
+
+        var merged_exchanges = refined_exchanges[0];
         this.mergedExchanges = merged_exchanges;
         this.displayedLinks = merged_exchanges;
+
+        this.grouped_exchanges = refined_exchanges[1];
     }
 
     showGraph() {
@@ -42,7 +48,10 @@ class Graph {
             .force("charge", d3.forceManyBody())
             .force("center", d3.forceCenter(width / 2, height / 2));
 
+        var grouped = this.grouped_exchanges;
         var exchangesChart = this.linkChart;
+        var pchart = this.pieChart;
+
         var link = svg.append("g")
             .attr("class", "links")
             .selectAll("line")
@@ -50,8 +59,16 @@ class Graph {
             .attr("stroke-width", function (d) {
                 return 0.15 * Math.log(d['volume24h']);
             }).on("click", function(d){
-              console.log(d);
               exchangesChart.addDataset(d['source']['id'] + "-" + d['target']['id'], Math.log(d['volume24h'])+10);
+              var markets = grouped[d['source']['id']+","+d['target']['id']];
+              var labels = [];
+              var values = [];
+              markets.forEach(function (m) {
+                  labels.push(m['source']);
+                  values.push(m['volume24h']);
+              });
+
+              pchart.createChart(values, labels);
             });
 
         link.append("title")
@@ -74,7 +91,6 @@ class Graph {
                 .on("drag", dragged)
                 .on("end", dragended))
             .on("click", function(d){
-              console.log(d);
               chart.addDataset(d['name'], Math.log(d['price-usd'])+10);
             });
 
@@ -186,7 +202,7 @@ class Graph {
                 });
         }
         merged_exchanges = _.sortBy(merged_exchanges, ['source', 'target']);
-        return merged_exchanges;
+        return [merged_exchanges, exchanges_grouped];
     }
 
     /**
@@ -199,6 +215,8 @@ class Graph {
 
         this.priceChart.resetChart();
         this.linkChart.resetChart();
+        this.pieChart.resetChart();
+
         this._init(currencies, exchanges);
         this.showGraph();
     }

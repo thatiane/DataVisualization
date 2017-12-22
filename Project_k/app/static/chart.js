@@ -85,7 +85,7 @@ class DataChart {
           display: false
         },
         tooltips: {
-        	enabled: false
+        	enabled: true
         }
       }
     });
