@@ -43,10 +43,12 @@ class Graph {
         var color = d3.scaleOrdinal(d3.schemeCategory20);
 
         var simulation = d3.forceSimulation()
-            .force("link", d3.forceLink().id(function (d) {return d.id;}).distance(y /3.5).strength(0.1))
-            .force("collide", d3.forceCollide().radius(15))
-            .force("charge", d3.forceManyBody())
-            .force("center", d3.forceCenter(width / 2 - 100, height /2 - 100));
+            .force("link", d3.forceLink().id(function (d) {return d.id;}).distance(y/2).strength(0.2))
+            .force("collide", d3.forceCollide().radius(7))
+            .force("yAxis", d3.forceY(y))
+            .force("xAxis", d3.forceX(x))
+            .force("charge", d3.forceManyBody().strength(0.01))
+            .force("center", d3.forceCenter(width / 2 - 200, height /2 - 200));
 
         var grouped = this.grouped_exchanges;
         var exchangesChart = this.linkChart;
@@ -83,7 +85,7 @@ class Graph {
             .selectAll("circle")
             .data(this.displayedCurrencies).enter().append("circle")
             .attr("r", function (d) {
-                return 0.7 * Math.log(d['volume-usd']);
+                return 0.4 * Math.log(d['volume-usd']);
             })
             .attr("fill", 'black')
             .call(d3.drag()

@@ -85,7 +85,26 @@ class DataChart {
           display: false
         },
         tooltips: {
-        	enabled: true
+        	enabled: true,
+            mode: "nearest",
+            callbacks: {
+            label: function (tooltipItem, data	) {
+                var label = 'xLabel';
+                if(typeof tooltipItem['xLabel'] === "string") {
+                    label = 'yLabel';
+                }
+
+                var res = Math.exp(tooltipItem[label] - 10);
+                console.log(tooltipItem);
+                return res + "";
+            },
+            title: function(a, data) {
+        	    return "";
+            }
+
+            },
+
+
         }
       }
     });
