@@ -78,10 +78,14 @@ class Graph {
 
 
         var chart = this.priceChart;
-        var node = svg.append("g")
+        var nodes = svg.append("g")
             .attr("class", "nodes")
             .selectAll("circle")
-            .data(this.displayedCurrencies).enter().append("circle")
+            .data(this.displayedCurrencies)
+            .enter()
+
+        var node = nodes.append("circle")
+            .attr("class", "node")
             .attr("r", function (d) {
                 return 0.7 * Math.log(d['volume-usd']);
             })
