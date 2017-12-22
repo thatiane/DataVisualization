@@ -48,7 +48,7 @@ class Graph {
             .force("yAxis", d3.forceY(y))
             .force("xAxis", d3.forceX(x))
             .force("charge", d3.forceManyBody().strength(0.01))
-            .force("center", d3.forceCenter(width / 2+150, height /2 - 150));
+            .force("center", d3.forceCenter(width / 2, height /2));
 
         var grouped = this.grouped_exchanges;
         var exchangesChart = this.linkChart;
@@ -65,12 +65,13 @@ class Graph {
               var markets = grouped[d['source']['id']+","+d['target']['id']];
               var labels = [];
               var values = [];
-              markets.forEach(function (m) {
+              _.uniqBy(markets, x=>x.source).forEach(function (m) {
                   labels.push(m['source']);
                   values.push(m['volume24h']);
               });
 
-              pchart.createChart(values, labels);
+              var title = d['source']['id']+"-"+d['target']['id']
+              pchart.createChart(title, values, labels);
             });
 
         link.append("title")
@@ -238,11 +239,12 @@ class Graph {
         var markets = this.grouped_exchanges[d['source']['id']+","+d['target']['id']];
               var labels = [];
               var values = [];
-              markets.forEach(function (m) {
+              _.uniqBy(markets, x=>x.source).forEach(function (m) {
                   labels.push(m['source']);
                   values.push(m['volume24h']);
               });
 
-              pieChart.createChart(values, labels);
+              var title = d['source']['id']+"-"+d['target']['id'];
+              pieChart.createChart(title, values, labels);
     }
 }

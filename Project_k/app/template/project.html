@@ -45,17 +45,17 @@
     <div id="ui" data-step="6" data-intro="Here you can create your own network of nodes and explore it. Enjoy!">
         <a class="btn" href="javascript:void(0);" onclick="javascript:intro();">Tour this website</a>
         <div>
-            <a id="clean">Clean</a>
-            <a id="reinitialise">Restart</a>
+            <a id="clean" class="col-md-6 btn">Clean</a>
+            <a id="reinitialise" class="col-md-6 btn">Restart</a>
         </div>
 
         <a id="modify-network" href="#modify-list" class="btn" data-toggle="collapse">Customize network</a>
         <div id="modify-list" class="collapse"></div>
     </div>
 
-        <div id="container-pie">
-            <canvas id="pie-chart" width="250" height="250" data-step="5" data-intro="Exchanges between coins can happen on different markets!
-        This doughnut shows where happened the exchanges between the connected coins. Drag the mouse over the different fractions to learn more!"></canvas>
+        <div id="container-pie"  data-step="5" data-intro="Exchanges between coins can happen on different markets!
+        This doughnut shows where happened the exchanges between the connected coins. Drag the mouse over the different fractions to learn more!">
+            <canvas id="pie-chart" width="250" height="250"></canvas>
         </div>
 
         <div id="container-nodes-histo"  data-step="3" data-intro="This histogram can be populated by single click on the nodes of the graph.

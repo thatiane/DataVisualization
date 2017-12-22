@@ -8,7 +8,7 @@ class PieChart {
         this.ctx = this.canvas.getContext("2d");
     }
 
-    createChart(values, labels) {
+    createChart(title, values, labels) {
         this.resetChart();
 
         var colors = [];
@@ -27,6 +27,11 @@ class PieChart {
                 labels: labels
             },
             options: {
+                 title: {
+                        display: true,
+                        text: title
+                 },
+
                 maintainAspectRatio: false,
                 plugins: {
                     datalabels: {
