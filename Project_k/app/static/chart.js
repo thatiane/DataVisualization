@@ -88,23 +88,19 @@ class DataChart {
         	enabled: true,
             mode: "nearest",
             callbacks: {
-            label: function (tooltipItem, data	) {
-                var label = 'xLabel';
-                if(typeof tooltipItem['xLabel'] === "string") {
-                    label = 'yLabel';
+                label: function (tooltipItem, data	) {
+                    var label = 'xLabel';
+                    if(typeof tooltipItem['xLabel'] === "string") {
+                        label = 'yLabel';
+                    }
+                    var res = Math.exp(tooltipItem[label] - 10);
+                    return res + "";
+                },
+
+                title: function(a, data) {
+                    return "";
                 }
-
-                var res = Math.exp(tooltipItem[label] - 10);
-                console.log(tooltipItem);
-                return res + "";
             },
-            title: function(a, data) {
-        	    return "";
-            }
-
-            },
-
-
         }
       }
     });
