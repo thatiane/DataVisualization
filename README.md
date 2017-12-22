@@ -2,8 +2,7 @@
 
 Please click on the link below to get to our visualization
 
-http://cryptocurrency.gucevska.io:5000
-
+http://cryptocurrency.gucevska.io
 ### Server setup
 
 In order to test/deploy the app you have to run the flask server.
