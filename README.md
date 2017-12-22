@@ -1,10 +1,18 @@
 ## /!\ Please read /!\
 
-Please click on the link below to get to our visualization
+##Visualisation 
+
+Please click on the link below to get to our visualization:
 
 http://cryptocurrency.gucevska.io
-### Server setup
 
+## Process book 
+http://cryptocurrency.gucevska.io/processbook
+
+## Screencast
+http://cryptocurrency.gucevska.io/demo
+
+### Server setup
 In order to test/deploy the app you have to run the flask server.
 
 Make sure you have flask and flask-assets installed and all other libraries.
