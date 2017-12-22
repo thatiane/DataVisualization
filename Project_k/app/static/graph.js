@@ -32,19 +32,42 @@ class Graph {
             e = d.documentElement,
             g = d.getElementById('graph'),
             x = (g.clientWidth),
-            y = (w.innerHeight || e.clientHeight || g.clientHeight);
+            y = (w.innerHeight || e.clientHeight || g.clientHeight),
+            x_trans = x/2.0 + 100.0,
+            y_trans = y/2.0 - 250.0,
+            scale_trans = 0.5;
+
 
         var svg = d3.select("#graph")
                 .attr("width", x)
                 .attr("height", y)
-                .call(d3.zoom().on("zoom", function () { svg.attr("transform", d3.event.transform)}))
-                .append("g"), width = +x, height = +y;
+                .call(d3.zoom().on("zoom", function () {
+                    let value = d3.event.transform;
+                    let new_x = ((value.x/1.0) + x_trans);
+                    let new_y = ((value.y/1.0) + y_trans);
+                    let new_scale = value.k * scale_trans;
+
+                     svg.attr("transform", "translate("+(-x_trans)+","+(-y_trans)+")scale("+new_scale+")translate("+new_x+","+new_y+")")
+                 }))
+                .append("g")
+                .attr("transform", "scale("+scale_trans+")translate("+x_trans+","+y_trans+")")
+
+        var width = +x;
+        var height = +y;
 
         var color = d3.scaleOrdinal(d3.schemeCategory20);
 
+        /*
         var simulation = d3.forceSimulation()
-            .force("link", d3.forceLink().id(function (d) {return d.id;}).distance(y /3.5).strength(0.1))
+            .force("link", d3.forceLink().id(function (d) {return d.id;}).distance(10000).strength(0.01))
             .force("collide", d3.forceCollide().radius(15))
+            .force("charge", d3.forceManyBody())
+            .force("center", d3.forceCenter(width / 2 - 100, height /2 - 100));
+        */
+        var simulation = d3.forceSimulation()
+            .force("link", d3.forceLink().id(function (d) {return d.id;}).distance(y/2).strength(0.1))
+            .force("collide", d3.forceCollide().radius(15))
+            .force("positioning", d3.forceY(x))
             .force("charge", d3.forceManyBody())
             .force("center", d3.forceCenter(width / 2 - 100, height /2 - 100));
 
@@ -87,7 +110,7 @@ class Graph {
         var node = nodes.append("circle")
             .attr("class", "node")
             .attr("r", function (d) {
-                return 0.7 * Math.log(d['volume-usd']);
+                return Math.log(d['volume-usd']) ;
             })
             .attr("fill", 'black')
             .call(d3.drag()
@@ -227,9 +250,9 @@ class Graph {
 
     addAllToCharts() {
         var nodeChart = this.priceChart;
-        this.displayedCurrencies.slice(0,20).forEach(x=>nodeChart.addDataset(x['name'], Math.log(x['price-usd'])+10));
+        this.displayedCurrencies.slice(0,5).forEach(x=>nodeChart.addDataset(x['name'], Math.log(x['price-usd'])+10));
         var linkChart = this.linkChart;
-        this.displayedLinks.slice(0,30).forEach(d => linkChart.addDataset(d['source']['id'] + "-" + d['target']['id'], Math.log(d['volume24h'])+10));
+        this.displayedLinks.slice(0,10).forEach(d => linkChart.addDataset(d['source']['id'] + "-" + d['target']['id'], Math.log(d['volume24h'])+10));
 
         var pieChart = this.pieChart;
         var d = this.displayedLinks[0];
