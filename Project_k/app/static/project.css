@@ -59,17 +59,16 @@ html, body {
     left: 200px;
     bottom: 0;
     height: 200px;
-    max-width: 70vw;
+    max-width: calc(100% - 550px);
 }
 
 #container-nodes-histo {
     position: fixed;
     right: 0;
-    width: 400px;
-    max-height: 65vh;
+    width: 200px;
+    max-height: calc(100% - 300px);
     bottom: 200px;
     top: 70px;
-    overflow-y: auto;
 }
 
 #ui {
@@ -91,13 +90,17 @@ html, body {
     margin-bottom: 2px;
 }
 
-#pie-chart, #container-pie {
-    margin: 0 auto;
+#container-pie {
     position: fixed;
-    right: 0px;
+    right: 0;
     bottom: 0;
-    width: 400px !important;
+    width: 300px !important;
     height: auto;
+}
+
+#pie-chart {
+    margin: 0;
+    padding: 0;
 }
 
 /* Cool slider properties*/

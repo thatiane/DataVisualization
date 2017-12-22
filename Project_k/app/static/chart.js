@@ -110,7 +110,8 @@ class DataChart {
   }
   
   computeHeight(x) {
-  	return (x * 50) + "px";
+	var ret = x*50;
+  	return ret + "px";
   }
   
   addDataset(label, value) {
