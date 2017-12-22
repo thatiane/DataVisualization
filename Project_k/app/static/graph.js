@@ -4,9 +4,9 @@ class Graph {
     constructor(currencies, exchanges) {
         this._init(currencies, exchanges);
 
-        this.priceChart = new DataChart("currencies-chart", {mode: "horizontalBar"});
-        this.linkChart = new DataChart("exchanges-chart", { mode: "bar" });
-        this.pieChart = new PieChart("markets");
+        this.priceChart = new DataChart("nodes-histo", {mode: "horizontalBar"});
+        this.linkChart = new DataChart("links-histo", { mode: "bar" });
+        this.pieChart = new PieChart("pie-chart");
 
     }
 
@@ -43,10 +43,10 @@ class Graph {
         var color = d3.scaleOrdinal(d3.schemeCategory20);
 
         var simulation = d3.forceSimulation()
-            .force("link", d3.forceLink().id(function (d) {return d.id;}).distance(y / 2.5).strength(0.1))
+            .force("link", d3.forceLink().id(function (d) {return d.id;}).distance(y /3.5).strength(0.1))
             .force("collide", d3.forceCollide().radius(15))
             .force("charge", d3.forceManyBody())
-            .force("center", d3.forceCenter(width / 2, height / 2));
+            .force("center", d3.forceCenter(width / 2 - 100, height /2 - 100));
 
         var grouped = this.grouped_exchanges;
         var exchangesChart = this.linkChart;

@@ -1,5 +1,5 @@
-const SELECT_COLOR = 'rgb(0, 128, 0)';
-const DESELECT_COLOR = 'rgb(255, 255, 0)';
+const SELECT_COLOR = 'rgba(139, 147, 167, 0.29)';
+const DESELECT_COLOR = 'rgba(240, 241, 244, 0.29)';
 
 class InteractiveGraph {
 

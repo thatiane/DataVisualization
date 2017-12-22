@@ -27,6 +27,7 @@ class PieChart {
                 labels: labels
             },
             options: {
+                maintainAspectRatio: false,
                 plugins: {
                     datalabels: {
                         display: false,

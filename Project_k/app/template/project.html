@@ -2,11 +2,8 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <script src="https://d3js.org/d3.v4.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.4/lodash.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+        <link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
 
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -30,24 +27,34 @@
       </div>
     </nav>
 
-      <div class="row">
-            <div id="ui" class="col-sm-2">
-                <div>
-                    <a id="clean" class="btn col-sm-6">Clean network</a>
-                    <a id="reinitialise" class="btn col-sm-6">Reinitialise network</a>
-                </div>
+    <svg id="graph"></svg>
 
-                <a id="modify-network" href="#modify-list" class="btn w-100" data-toggle="collapse">Modify current network</a>
-                <div id="modify-list" class="collapse"></div>
-                <div style="position:relative"><canvas id="markets" width="600" height="400"></canvas></div>
+    <div id="ui">
+        <div>
+            <a id="clean" class="btn col-md-5">Clean</a>
+            <a id="reinitialise" class="btn col-md-5">Restart</a>
+        </div>
 
-                <div style="position:relative"> <canvas id="currencies-chart"> </canvas></div>
-            </div>
-            <div class="col-sm-10">
-                <svg id="graph"></svg>
-                <div style="position:relative; width: 100%"> <canvas id="exchanges-chart"> </canvas></div>
-            </div>
+        <a id="modify-network" href="#modify-list" class="btn" data-toggle="collapse">Customize network</a>
+        <div id="modify-list" class="collapse"></div>
+    </div>
+
+    <div id="container-pie"><canvas id="pie-chart"></canvas></div>
+    <div id="container-nodes-histo"><canvas id="nodes-histo"></canvas></div>
+    <div id="container-links-histo"><canvas id="links-histo"></canvas></div>
+
       </div>
+
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.4/lodash.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
+      <!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
       {% assets "javascript_js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
@@ -58,9 +65,5 @@
         <script src="../static/pieChart.js"></script>
       {% endassets %}
 
-        <!-- jQuery library -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <!-- Latest compiled JavaScript -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     </body>
 </html>
