@@ -12,6 +12,8 @@ http://cryptocurrency.gucevska.io/processbook
 ## Screencast
 http://cryptocurrency.gucevska.io/demo
 
+or on youtube: https://www.youtube.com/watch?v=zV2kfC2REx4&feature=youtu.be
+
 ### Server setup
 In order to test/deploy the app you have to run the flask server.
 
