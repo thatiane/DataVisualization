@@ -33,7 +33,7 @@ class PieChart {
                         display: false,
                     }
                 },
-                responsive: true,
+                responsive: false,
                 legend: {
             display: false
          },
