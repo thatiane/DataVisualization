@@ -11,6 +11,16 @@
 
         <title>Crypto Currencies</title>
         <link rel="stylesheet" href="../static/project.css" />
+
+        <script>
+                function intro() {
+                    var tour = introJs();
+                    tour.setOption('tooltipPosition', 'auto');
+                    tour.setOption('positionPrecedence', ['left', 'right', 'top', 'bottom']);
+                    tour.setOption("skipLabel", "Exit");
+                    tour.start();
+                }
+        </script>
     </head>
 
     <body class="container-fluid"  style="padding:0" >
@@ -33,6 +43,7 @@
     stay together."></svg>
 
     <div id="ui" data-step="6" data-intro="Here you can create your own network of nodes and explore it. Enjoy!">
+        <a class="btn" href="javascript:void(0);" onclick="javascript:intro();">Tour this website</a>
         <div>
             <a id="clean" class="btn col-md-5">Clean</a>
             <a id="reinitialise" class="btn col-md-5">Restart</a>
