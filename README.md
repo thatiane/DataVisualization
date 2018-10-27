@@ -17,18 +17,26 @@ or on youtube: https://www.youtube.com/watch?v=zV2kfC2REx4&feature=youtu.be
 ### Server setup
 In order to test/deploy the app you have to run the flask server.
 
-Make sure you have flask and flask-assets installed and all other libraries.
+#### Create a virtual environment
 
 ```
-$ pip install Flask
-$ pip install Flask-Assets
-$ pip install beautifulsoup4
+$ virtualenv venv
+```
+
+#### Activate the corresponding environment
+```
+$ . venv/bin/activate
+```
+
+#### Install dependencies
+```
+$ sudo pip install -r requirements.txt
 ```
 
 Then go to Project_k/server/flask and run:
 
 ```
-$ python3 flask_server.py
+(venv) $ python3 flask_server.py
 ```
 
 You will then be able to connect to the server on http://0.0.0.0:5000/ by default.

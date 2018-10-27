@@ -5,3 +5,4 @@ Project_k/app/static/gen/*
 __pycache__/
 gen
 .webassets-cache
+venv/
